@@ -47,9 +47,11 @@ public class Player : MonoBehaviour
 
     void FixedUpdate()
     {
-        var joy = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-        var moveDir = joy.x * transform.right + joy.y * transform.forward;
-        var movement = Speed * Time.deltaTime * moveDir;
-        rigidbody.MovePosition(rigidbody.position + movement);
+        var movement = Vector3.zero;
+        movement += Input.GetAxis("Horizontal") * transform.right;
+        movement += Input.GetAxis("Vertical") * transform.forward;
+        movement.Normalize(); // Fixes diagonal movement speed-up
+        movement *= Speed * Time.deltaTime;
+        rigidbody.position += movement;
     }
 }
