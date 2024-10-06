@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class Player : MonoBehaviour
+public class MovementFromInput : MonoBehaviour
 {
     public float Speed;
 
