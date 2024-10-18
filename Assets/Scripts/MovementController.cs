@@ -7,7 +7,7 @@ public class MovementController : MonoBehaviour
     private new Rigidbody rigidbody;
 
     [SerializeField] private Transform rotationTracker;
-    [SerializeField] private float rotationSpeed = 0.1f;
+    [SerializeField] private float rotationSpeed = 400f;
     [SerializeField] private float speed = 3;
     public Quaternion CameraForwardRotation => Quaternion.Euler(0, rotationTracker.eulerAngles.y, 0);
     public Vector3 CameraForward => CameraForwardRotation * Vector3.forward;

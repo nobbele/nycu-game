@@ -90,6 +90,7 @@ public class Player : MonoBehaviour, IDamageHandler
         if (source == this) return;
 
         Health -= damage;
+        // TODO i-frames.
         // TODO Damage effect
     }
 }
