@@ -14,7 +14,7 @@ public class Player : MonoBehaviour
     public int Experience;
     public int Level;
 
-    public int Health = 10;
+    public int Health = 100;
 
     public int AttributePoints;
 
@@ -32,6 +32,17 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.U))
             Experience += 10;
+    }
+
+    public void TakeDamage(int damage)
+    {
+        Health -= damage;
+        Debug.Log($"Health -{damage} = ({Health})");
+
+        if (Health <= 0)
+        {
+            GameOver();
+        }
     }
 
     void LevelUp()
