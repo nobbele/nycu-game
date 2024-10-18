@@ -24,6 +24,13 @@ public class Player : MonoBehaviour, IDamageHandler
 
     [SerializeField] private Transform attackRangeHint;
 
+    private MovementController movementController;
+
+    void Start()
+    {
+        movementController = GetComponent<MovementController>();
+    }
+
     void Update()
     {
         if (Experience >= XpRequired)
@@ -43,6 +50,9 @@ public class Player : MonoBehaviour, IDamageHandler
 
     void Attack()
     {
+        StartCoroutine(movementController.co_FaceCameraForward());
+        if (!movementController.IsFacingCameraForward()) return;
+
         var rayVector = attackRangeHint.position - transform.position;
         if (Physics.Raycast(
             origin: transform.position,

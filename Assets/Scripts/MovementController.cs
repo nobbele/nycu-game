@@ -1,7 +1,8 @@
+using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class MovementFromInput : MonoBehaviour
+public class MovementController : MonoBehaviour
 {
     private new Rigidbody rigidbody;
 
@@ -24,8 +25,35 @@ public class MovementFromInput : MonoBehaviour
             Cursor.lockState = CursorLockMode.Locked;
         if (Input.GetKeyDown(KeyCode.Escape))
             Cursor.lockState = CursorLockMode.None;
+    }
 
+    public bool IsFacingCameraForward() => IsFacing(transform.position + CameraForward);
+    public bool IsFacing(Vector3 target)
+    {
+        var quat = Quaternion.LookRotation((target - transform.position).normalized);
+        quat.eulerAngles = new Vector3(0, quat.eulerAngles.y, 0);
 
+        // +- 10 degrees of leniency
+        return Mathf.Abs(rigidbody.rotation.eulerAngles.y - quat.eulerAngles.y) < 10f;
+    }
+
+    private bool faceTowardsRunning = false;
+    public IEnumerator co_FaceCameraForward() => co_FaceTowardsTarget(transform.position + CameraForward);
+    public IEnumerator co_FaceTowardsTarget(Vector3 target)
+    {
+        if (faceTowardsRunning) yield break;
+        faceTowardsRunning = true;
+
+        var quat = Quaternion.LookRotation((target - transform.position).normalized);
+        quat.eulerAngles = new Vector3(0, quat.eulerAngles.y, 0);
+
+        while (rigidbody.rotation.eulerAngles.y != quat.eulerAngles.y)
+        {
+            rigidbody.rotation = Quaternion.RotateTowards(rigidbody.rotation, quat, rotationSpeed * Time.deltaTime);
+            yield return null;
+        }
+
+        faceTowardsRunning = false;
     }
 
     void FixedUpdate()
