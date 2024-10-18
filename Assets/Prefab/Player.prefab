@@ -79,7 +79,7 @@ GameObject:
   - component: {fileID: 6363546647090710889}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -117,7 +117,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Experience: 0
   Level: 0
-  Health: 10
+  Health: 100
   AttributePoints: 0
   Attributes:
     Damage: 0

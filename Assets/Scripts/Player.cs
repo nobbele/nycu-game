@@ -14,7 +14,7 @@ public class Player : MonoBehaviour, IDamageHandler
     public int Experience;
     public int Level;
 
-    public int Health = 10;
+    public int Health = 100;
 
     public int AttributePoints;
 
