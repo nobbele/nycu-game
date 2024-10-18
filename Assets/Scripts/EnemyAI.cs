@@ -58,10 +58,8 @@ public class EnemyAI : MonoBehaviour {
         timeSinceLastAttack += Time.deltaTime;
 
         if (timeSinceLastAttack >= attackInterval) {
-            Player playerScript = player.GetComponent<Player>();
-            if (playerScript != null) {
-                playerScript.TakeDamage(attackDamage);
-            }
+            if (player.TryGetComponent(out IDamageHandler damageHandler))
+                damageHandler.OnDamage(gameObject, attackDamage);
             timeSinceLastAttack = 0f;
         }
     }

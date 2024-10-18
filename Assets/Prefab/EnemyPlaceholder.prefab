@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 3575615898704063940}
   - component: {fileID: 577983932160715861}
   - component: {fileID: 7507364121971270342}
+  - component: {fileID: 5374150996595182526}
   m_Layer: 0
   m_Name: EnemyPlaceholder
   m_TagString: Untagged
@@ -146,5 +147,20 @@ MonoBehaviour:
   player: {fileID: 0}
   spawnPoint: {fileID: 0}
   chaseRange: 8
+  attackRange: 3
   wanderRadius: 2.5
   moveInterval: 3
+  attackInterval: 1.5
+  attackDamage: 10
+--- !u!114 &5374150996595182526
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2634175206447608913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5649f4b57dc429bd89c1d2a7ac8b800, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

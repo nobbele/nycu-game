@@ -8,7 +8,7 @@ public class PlayerAttributes
     public int Speed = 0;
     public int Stamina = 0;
 }
-public class Player : MonoBehaviour
+public class Player : MonoBehaviour, IDamageHandler
 {
 
     public int Experience;
@@ -22,6 +22,15 @@ public class Player : MonoBehaviour
 
     public int XpRequired => 20 * Level + 100;
 
+    [SerializeField] private Transform attackRangeHint;
+
+    private MovementController movementController;
+
+    void Start()
+    {
+        movementController = GetComponent<MovementController>();
+    }
+
     void Update()
     {
         if (Experience >= XpRequired)
@@ -30,18 +39,33 @@ public class Player : MonoBehaviour
         if (Health <= 0)
             GameOver();
 
+        // Input Handlers
+        if (Input.GetMouseButtonDown(0))
+            Attack();
+
+        // Debug Input
         if (Input.GetKeyDown(KeyCode.U))
             Experience += 10;
     }
 
-    public void TakeDamage(int damage)
+    void Attack()
     {
-        Health -= damage;
-        Debug.Log($"Health -{damage} = ({Health})");
+        StartCoroutine(movementController.co_FaceCameraForward());
+        if (!movementController.IsFacingCameraForward()) return;
 
-        if (Health <= 0)
+        var rayVector = attackRangeHint.position - transform.position;
+        if (Physics.Raycast(
+            origin: transform.position,
+            direction: rayVector.normalized,
+            hitInfo: out RaycastHit hit,
+            maxDistance: rayVector.magnitude))
         {
-            GameOver();
+            var gameObject = hit.collider.gameObject;
+            if (gameObject.TryGetComponent(out IDamageHandler damageHandler))
+            {
+                var damage = 1 + Attributes.Damage;
+                damageHandler.OnDamage(this.gameObject, damage);
+            }
         }
     }
 
@@ -59,5 +83,14 @@ public class Player : MonoBehaviour
     {
         print("Game over");
         // TODO
+    }
+
+    public void OnDamage(GameObject source, int damage)
+    {
+        if (source == this) return;
+
+        Health -= damage;
+        // TODO i-frames.
+        // TODO Damage effect
     }
 }
