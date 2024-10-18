@@ -3,55 +3,44 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class MovementFromInput : MonoBehaviour
 {
-    public float Speed;
-
-    public float Sensitivity;
-
     private new Rigidbody rigidbody;
-    private new Camera camera;
 
-    private Vector2 currentRotation;
-    public float maxYAngle = 90f;
+    [SerializeField] private Transform rotationTracker;
+    [SerializeField] private float rotationSpeed = 0.1f;
+    [SerializeField] private float speed = 3;
+    public Quaternion CameraForwardRotation => Quaternion.Euler(0, rotationTracker.eulerAngles.y, 0);
+    public Vector3 CameraForward => CameraForwardRotation * Vector3.forward;
+    public Vector3 CameraRight => CameraForwardRotation * Vector3.right;
 
     void Start()
     {
         rigidbody = GetComponent<Rigidbody>();
-        camera = GetComponentInChildren<Camera>();
     }
 
     void Update()
     {
-        // Handle cursor locking
+        // // Handle cursor locking
         if (Input.GetMouseButtonDown(0))
             Cursor.lockState = CursorLockMode.Locked;
         if (Input.GetKeyDown(KeyCode.Escape))
             Cursor.lockState = CursorLockMode.None;
 
-        // We'll handle camera rotation only when the mouse locked for use.
-        if (Cursor.lockState == CursorLockMode.Locked)
-        {
-            currentRotation.x += Input.GetAxis("Mouse X") * Sensitivity;
-            currentRotation.y -= Input.GetAxis("Mouse Y") * Sensitivity;
-            currentRotation.x = Mathf.Repeat(currentRotation.x, 360);
-            currentRotation.y = Mathf.Clamp(currentRotation.y, -maxYAngle, maxYAngle);
 
-            /*
-             * For the horizontal rotation we rotate the player itself so they face the right direction.
-             * But for vertical rotation we'll only rotate the camera itself,
-             * so the player will still face forward and not tilt.
-             */
-            transform.rotation = Quaternion.Euler(0, currentRotation.x, 0);
-            camera.transform.localRotation = Quaternion.Euler(currentRotation.y, 0, 0);
-        }
     }
 
     void FixedUpdate()
     {
         var movement = Vector3.zero;
-        movement += Input.GetAxis("Horizontal") * transform.right;
-        movement += Input.GetAxis("Vertical") * transform.forward;
+        movement += Input.GetAxis("Horizontal") * CameraRight;
+        movement += Input.GetAxis("Vertical") * CameraForward;
         movement.Normalize(); // Fixes diagonal movement speed-up
-        movement *= Speed * Time.deltaTime;
+        movement *= speed * Time.deltaTime;
         rigidbody.position += movement;
+
+        // Slowly rotate the player towards the camera facing angle when moving.
+        if (movement.sqrMagnitude > 0)
+        {
+            rigidbody.rotation = Quaternion.RotateTowards(rigidbody.rotation, CameraForwardRotation, rotationSpeed * Time.deltaTime);
+        }
     }
 }
