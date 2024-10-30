@@ -14,7 +14,13 @@ public class Player : MonoBehaviour, IDamageHandler
     public int Experience;
     public int Level;
 
+    public int MaxHealth = 100;
     public int Health = 100;
+
+    public float InvincibilityTime = 1f;
+
+    private float invincibilityTimer = 0;
+    public bool IsInvincible => invincibilityTimer > 0;
 
     public int AttributePoints;
 
@@ -23,6 +29,7 @@ public class Player : MonoBehaviour, IDamageHandler
     public int XpRequired => 20 * Level + 100;
 
     [SerializeField] private Transform attackRangeHint;
+    [SerializeField] private HUD HUD;
 
     private MovementController movementController;
 
@@ -38,6 +45,18 @@ public class Player : MonoBehaviour, IDamageHandler
 
         if (Health <= 0)
             GameOver();
+
+        if (Health > MaxHealth)
+            Health = MaxHealth;
+
+        if (invincibilityTimer > 0)
+        {
+            invincibilityTimer -= Time.deltaTime;
+            invincibilityTimer = Mathf.Max(0, invincibilityTimer);
+        }
+
+        HUD.XpSlider.value = Experience / XpRequired;
+        HUD.HealthSlider.value = (float)Health / MaxHealth;
 
         // Input Handlers
         if (Input.GetMouseButtonDown(0))
@@ -88,9 +107,10 @@ public class Player : MonoBehaviour, IDamageHandler
     public void OnDamage(GameObject source, int damage)
     {
         if (source == this) return;
+        if (IsInvincible) return;
 
         Health -= damage;
-        // TODO i-frames.
+        invincibilityTimer = InvincibilityTime;
         // TODO Damage effect
     }
 }
