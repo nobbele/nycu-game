@@ -68,6 +68,10 @@
     },
     "peacock.color": "#cef317",
     "cSpell.words": [
-        "Behaviour"
-    ]
+        "Behaviour",
+        "Keybind",
+        "keybinds",
+        "Prefs"
+    ],
+    "dotnet.preferCSharpExtension": true
 }

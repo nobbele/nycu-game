@@ -11,8 +11,7 @@ public class MainMenu : MonoBehaviour {
     }
 
     public void OpenSettings() {
-        // TODO: Implement "open settings"
-        Debug.Log("Settings Button Clicked");
+        SceneManager.LoadScene("SettingsMenuScene");
     }
 
     public void QuitGame() {
