@@ -15,6 +15,8 @@ public class MovementController : MonoBehaviour
     public Vector3 CameraForward => CameraForwardRotation * Vector3.forward;
     public Vector3 CameraRight => CameraForwardRotation * Vector3.right;
 
+    public bool DisabledMovement;
+
     private Dictionary<string, KeyCode> keybinds = new Dictionary<string, KeyCode>
     {
         { "Forward", KeyCode.W },
@@ -41,7 +43,12 @@ public class MovementController : MonoBehaviour
 
     void Update()
     {
-        // // Handle cursor locking
+        if (DisabledMovement) {
+            Cursor.lockState = CursorLockMode.None;
+            return;
+        }
+
+        // Handle cursor locking
         if (Input.GetMouseButtonDown(0))
             Cursor.lockState = CursorLockMode.Locked;
         if (Input.GetKeyDown(KeyCode.Escape))
@@ -79,6 +86,8 @@ public class MovementController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (DisabledMovement) return;
+
         Vector3 movement = Vector3.zero;
 
         if (Input.GetKey(keybinds["Left"]))
