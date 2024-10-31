@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -13,9 +15,28 @@ public class MovementController : MonoBehaviour
     public Vector3 CameraForward => CameraForwardRotation * Vector3.forward;
     public Vector3 CameraRight => CameraForwardRotation * Vector3.right;
 
+    private Dictionary<string, KeyCode> keybinds = new Dictionary<string, KeyCode>
+    {
+        { "Forward", KeyCode.W },
+        { "Left", KeyCode.A },
+        { "Backward", KeyCode.S },
+        { "Right", KeyCode.D }
+    };
+
     void Start()
     {
         rigidbody = GetComponent<Rigidbody>();
+        
+
+        var updatedKeybinds = new Dictionary<string, KeyCode>();
+
+        foreach (var key in keybinds.Keys)
+        {
+            string savedKey = PlayerPrefs.GetString($"Keybind_{key}", keybinds[key].ToString());
+            updatedKeybinds[key] = (KeyCode)Enum.Parse(typeof(KeyCode), savedKey);
+        }
+
+        keybinds = updatedKeybinds;
     }
 
     void Update()
@@ -58,14 +79,21 @@ public class MovementController : MonoBehaviour
 
     void FixedUpdate()
     {
-        var movement = Vector3.zero;
-        movement += Input.GetAxis("Horizontal") * CameraRight;
-        movement += Input.GetAxis("Vertical") * CameraForward;
-        movement.Normalize(); // Fixes diagonal movement speed-up
+        Vector3 movement = Vector3.zero;
+
+        if (Input.GetKey(keybinds["Left"]))
+            movement += -CameraRight;
+        if (Input.GetKey(keybinds["Right"]))
+            movement += CameraRight;
+        if (Input.GetKey(keybinds["Forward"]))
+            movement += CameraForward;
+        if (Input.GetKey(keybinds["Backward"]))
+            movement += -CameraForward;
+
+        movement.Normalize();
         movement *= speed * Time.deltaTime;
         rigidbody.position += movement;
 
-        // Slowly rotate the player towards the camera facing angle when moving.
         if (movement.sqrMagnitude > 0)
         {
             rigidbody.rotation = Quaternion.RotateTowards(rigidbody.rotation, CameraForwardRotation, rotationSpeed * Time.deltaTime);
