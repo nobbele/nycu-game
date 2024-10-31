@@ -1,9 +1,5 @@
 fileFormatVersion: 2
-<<<<<<<< HEAD:Assets/Scenes/UITestScene.unity.meta
-guid: 1dd9cb230a8c78c9a8bfdc990bc7b4b9
-========
 guid: 55d115c1df92e2a44a3c6e219c6ce685
->>>>>>>> 1420cdb6336b273741aac7a07c6d838358c2b2fd:Assets/Scenes/EnemyAIScene.unity.meta
 DefaultImporter:
   externalObjects: {}
   userData: 
