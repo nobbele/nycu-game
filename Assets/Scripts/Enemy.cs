@@ -6,9 +6,11 @@ public class Enemy : MonoBehaviour, IDamageHandler
 {
     public int Health = 20;
 
+    public bool IsDead => Health <= 0;
+
     void Update()
     {
-        if (Health <= 0)
+        if (IsDead)
             OnDead();
     }
 
