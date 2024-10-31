@@ -57,5 +57,21 @@
         "Temp/": true
     },
     "dotnet.defaultSolution": "nycu-game.sln",
-    "sarif-viewer.connectToGithubCodeScanning": "off"
+    "sarif-viewer.connectToGithubCodeScanning": "off",
+    "workbench.colorCustomizations": {
+        "sash.hoverBorder": "#d8f647",
+        "statusBar.background": "#cef317",
+        "statusBar.foreground": "#15202b",
+        "statusBarItem.hoverBackground": "#accc0b",
+        "statusBarItem.remoteBackground": "#cef317",
+        "statusBarItem.remoteForeground": "#15202b"
+    },
+    "peacock.color": "#cef317",
+    "cSpell.words": [
+        "Behaviour",
+        "Keybind",
+        "keybinds",
+        "Prefs"
+    ],
+    "dotnet.preferCSharpExtension": true
 }
