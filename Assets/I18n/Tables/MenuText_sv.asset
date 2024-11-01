@@ -1,0 +1,75 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9620f8c34305754d8cc9a7e49e852d9, type: 3}
+  m_Name: MenuText_sv
+  m_EditorClassIdentifier: 
+  m_LocaleId:
+    m_Code: sv
+  m_SharedData: {fileID: 11400000, guid: 6f203b7eaaa4a4e4b8d1fda372c4b8cc, type: 2}
+  m_Metadata:
+    m_Items: []
+  m_TableData:
+  - m_Id: 15862489088
+    m_Localized: "Inst\xE4llningar"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 112574750720
+    m_Localized: Volym
+    m_Metadata:
+      m_Items: []
+  - m_Id: 179893329920
+    m_Localized: Tangentbindningar
+    m_Metadata:
+      m_Items: []
+  - m_Id: 409925738496
+    m_Localized: "Fram\xE5t"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 469283528704
+    m_Localized: "Bak\xE5t"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 503584546816
+    m_Localized: "V\xE4nster"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 517224423424
+    m_Localized: "H\xF6ger"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 629937954816
+    m_Localized: Spela
+    m_Metadata:
+      m_Items: []
+  - m_Id: 649420496896
+    m_Localized: Avsluta
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1550860312576
+    m_Localized: "Spr\xE5k"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18044524584960
+    m_Localized: Tillbaka
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18102649249792
+    m_Localized: "\xC4ndra tangentbindning"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 192027429593088
+    m_Localized: "St\xE4ng"
+    m_Metadata:
+      m_Items: []
+  references:
+    version: 2
+    RefIds: []

@@ -1,6 +1,7 @@
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Localization.Settings;
 using UnityEngine.UI;
+using System.Collections;
 using UnityEngine.SceneManagement;
 using TMPro;
 
@@ -31,8 +32,30 @@ public class SettingsMenu : MonoBehaviour
 
     public void OnLanguageChanged()
     {
-        PlayerPrefs.SetString("Language", languageDropdown.options[languageDropdown.value].text);
+        string selectedLanguage = languageDropdown.options[languageDropdown.value].text;
+        PlayerPrefs.SetString("Language", selectedLanguage);
         PlayerPrefs.Save();
+
+        ChangeLanguage(selectedLanguage);
+    }
+
+    private void ChangeLanguage(string lang)
+    {
+        string localeCode = lang switch
+        {
+            "English" => "en",
+            "中文" => "zh-TW",
+            "Svenska" => "sv",
+            _ => "en"
+        };
+        StartCoroutine(SetLocale(localeCode));
+    }
+
+    private IEnumerator SetLocale(string localeCode)
+    {
+        yield return LocalizationSettings.InitializationOperation;
+        var selectedLocale = LocalizationSettings.AvailableLocales.GetLocale(localeCode);
+        LocalizationSettings.SelectedLocale = selectedLocale;
     }
 
     public void GoBackMainMenu()
