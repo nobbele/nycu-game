@@ -35,7 +35,7 @@ public class Player : MonoBehaviour, IDamageHandler
     [SerializeField] private Transform attackRangeHint;
     [SerializeField] private HUD HUD;
     [SerializeField] private CharacterMenu CharacterMenu;
-    [SerializeField] private CinemachineFreeLook CinemachineFreeLook;
+    //[SerializeField] private CinemachineFreeLook CinemachineFreeLook;
 
     private MovementController movementController;
 
@@ -98,21 +98,24 @@ public class Player : MonoBehaviour, IDamageHandler
             if (Input.GetKeyDown(KeyCode.U))
                 Experience += 10;
 
-            if (!CinemachineFreeLook.enabled) {
-                CinemachineFreeLook.enabled = true;
-            }
+            // if (!CinemachineFreeLook.enabled) {
+            //     CinemachineFreeLook.enabled = true;
+            // }
+            Cursor.lockState = CursorLockMode.Locked;
         } else {
-            if (CinemachineFreeLook.enabled) {
-                CinemachineFreeLook.enabled = false;
-            }
+            // if (CinemachineFreeLook.enabled) {
+            //     CinemachineFreeLook.enabled = false;
+            // }
+            Cursor.lockState = CursorLockMode.None;
         }
     }
 
     void Attack()
     {
-        StartCoroutine(movementController.co_FaceCameraForward());
-        if (!movementController.IsFacingCameraForward()) return;
-
+        // StartCoroutine(movementController.co_FaceCameraForward());
+        // if (!movementController.IsFacingCameraForward()) return;
+        StartCoroutine(movementController.AttackAnimation());
+        
         var rayVector = attackRangeHint.position - transform.position;
         if (Physics.Raycast(
             origin: transform.position,

@@ -8,15 +8,30 @@ public class MovementController : MonoBehaviour
 {
     private new Rigidbody rigidbody;
 
+    [SerializeField] private Animator animator;
     [SerializeField] private Transform rotationTracker;
     [SerializeField] private float rotationSpeed = 400f;
     [SerializeField] private float speed = 3;
+    
     public Quaternion CameraForwardRotation => Quaternion.Euler(0, rotationTracker.eulerAngles.y, 0);
     public Vector3 CameraForward => CameraForwardRotation * Vector3.forward;
     public Vector3 CameraRight => CameraForwardRotation * Vector3.right;
 
     public bool DisabledMovement;
+    
+    //Rotation For Animation
+    private Vector3 characterRotation = new (0, 0, 0);
+    private Vector3 idleRotation = new (0, 15, 0);
+    private Vector3 faceFrontRotation = new (0, 30, 0);
+    private Vector3 faceFrontLeftRotation = new (0, -20, 0);
+    private Vector3 faceFrontRightRotation = new (0, 80, 0);
 
+    private Quaternion frontRot => Quaternion.Euler(CameraForwardRotation.eulerAngles + faceFrontRotation);
+    private Quaternion frontLeftRot => Quaternion.Euler(CameraForwardRotation.eulerAngles + faceFrontLeftRotation);
+    private Quaternion frontRightRot => Quaternion.Euler(CameraForwardRotation.eulerAngles + faceFrontRightRotation);
+    private Quaternion idleRot => Quaternion.Euler(characterRotation + idleRotation);
+    
+    
     private Dictionary<string, KeyCode> keybinds = new Dictionary<string, KeyCode>
     {
         { "Forward", KeyCode.W },
@@ -28,7 +43,6 @@ public class MovementController : MonoBehaviour
     void Start()
     {
         rigidbody = GetComponent<Rigidbody>();
-        
 
         var updatedKeybinds = new Dictionary<string, KeyCode>();
 
@@ -84,11 +98,46 @@ public class MovementController : MonoBehaviour
         faceTowardsRunning = false;
     }
 
+    public IEnumerator AttackAnimation()
+    {
+        if (animator.GetBool("IsDoingAnimation")) yield break;
+        
+        //Enabling the animation
+        animator.applyRootMotion = true;
+        animator.SetBool("IsDoingAnimation",true);
+        animator.SetBool("IsSlashing", true);
+        animator.SetBool("IsMoving", false);
+        
+        //Setting Rotation
+        characterRotation = CameraForwardRotation.eulerAngles;
+        Quaternion attackRot = idleRot;
+        while (rigidbody.rotation != attackRot)
+        {
+            rigidbody.rotation = Quaternion.RotateTowards(rigidbody.rotation, attackRot, rotationSpeed * Time.deltaTime);
+            yield return null;
+        }
+        
+        //Wait until the animation is over
+        while (!animator.GetCurrentAnimatorStateInfo(0).IsName("Slash") || animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1)
+        {
+            yield return null;
+        }
+        
+        //Disabling the animation
+        animator.applyRootMotion = false;
+        animator.SetBool("IsSlashing", false);
+        animator.SetBool("IsDoingAnimation",false);
+    }
+
     void FixedUpdate()
     {
         if (DisabledMovement) return;
-
+        if (animator.GetBool("IsDoingAnimation")) return;
+        
         Vector3 movement = Vector3.zero;
+        
+        
+        Quaternion toRot = frontRot;
 
         if (Input.GetKey(keybinds["Left"]))
             movement += -CameraRight;
@@ -103,9 +152,48 @@ public class MovementController : MonoBehaviour
         movement *= speed * Time.deltaTime;
         rigidbody.position += movement;
 
+        //Is moving forward or backward
+        if (Input.GetKey(keybinds["Forward"]) || Input.GetKey(keybinds["Backward"]))
+        {
+            //Is moving forward
+            if (Input.GetKey(keybinds["Forward"]))
+            {
+                if (Input.GetKey(keybinds["Left"]))
+                    toRot = frontLeftRot;
+                if (Input.GetKey(keybinds["Right"]))
+                    toRot = frontRightRot;
+            }
+            //Is moving backward
+            if (Input.GetKey(keybinds["Backward"]))
+            {
+                if (Input.GetKey(keybinds["Left"]))
+                    toRot = frontRightRot;
+                if (Input.GetKey(keybinds["Right"]))
+                    toRot = frontLeftRot;
+            }
+            //If both left and right key are pressed
+            if (Input.GetKey(keybinds["Left"]) && Input.GetKey(keybinds["Right"]))
+                toRot = frontRot;
+        }
+        
+        animator.SetBool("IsMoving", false);
         if (movement.sqrMagnitude > 0)
         {
-            rigidbody.rotation = Quaternion.RotateTowards(rigidbody.rotation, CameraForwardRotation, rotationSpeed * Time.deltaTime);
+            animator.SetBool("IsMoving", true);
+            rigidbody.rotation = Quaternion.RotateTowards(rigidbody.rotation, toRot, rotationSpeed * Time.deltaTime);
+            characterRotation = CameraForwardRotation.eulerAngles;
+        }
+        else
+            rigidbody.rotation = idleRot;
+        
+        animator.SetBool("IsRunningForward", Input.GetKey(keybinds["Forward"]) && animator.GetBool("IsMoving"));
+        animator.SetBool("IsRunningBackward", Input.GetKey(keybinds["Backward"]) && animator.GetBool("IsMoving"));
+        animator.SetBool("IsStrafingLeft", IsStrafing("Left") && animator.GetBool("IsMoving"));
+        animator.SetBool("IsStrafingRight", IsStrafing("Right") && animator.GetBool("IsMoving"));
+        
+        bool IsStrafing(string s)
+        {
+            return !Input.GetKey(keybinds["Forward"]) && !Input.GetKey(keybinds["Backward"]) && Input.GetKey(keybinds[s]);
         }
     }
 }
