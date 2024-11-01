@@ -1,0 +1,81 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b11a58205ec3474ca216360e9fa74a8, type: 3}
+  m_Name: MenuText Shared Data
+  m_EditorClassIdentifier: 
+  m_TableCollectionName: MenuText
+  m_TableCollectionNameGuidString: 6f203b7eaaa4a4e4b8d1fda372c4b8cc
+  m_Entries:
+  - m_Id: 15862489088
+    m_Key: settings
+    m_Metadata:
+      m_Items: []
+  - m_Id: 112574750720
+    m_Key: volume
+    m_Metadata:
+      m_Items: []
+  - m_Id: 179893329920
+    m_Key: keybinds
+    m_Metadata:
+      m_Items: []
+  - m_Id: 409925738496
+    m_Key: forward
+    m_Metadata:
+      m_Items: []
+  - m_Id: 469283528704
+    m_Key: backward
+    m_Metadata:
+      m_Items: []
+  - m_Id: 503584546816
+    m_Key: left
+    m_Metadata:
+      m_Items: []
+  - m_Id: 517224423424
+    m_Key: right
+    m_Metadata:
+      m_Items: []
+  - m_Id: 629937954816
+    m_Key: play
+    m_Metadata:
+      m_Items: []
+  - m_Id: 649420496896
+    m_Key: quit
+    m_Metadata:
+      m_Items: []
+  - m_Id: 1550860312576
+    m_Key: language
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18044524584960
+    m_Key: back
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18102649249792
+    m_Key: change-key-binding
+    m_Metadata:
+      m_Items: []
+  - m_Id: 192027429593088
+    m_Key: close
+    m_Metadata:
+      m_Items: []
+  m_Metadata:
+    m_Items: []
+  m_KeyGenerator:
+    rid: 7796357292767313945
+  references:
+    version: 2
+    RefIds:
+    - rid: 7796357292767313945
+      type: {class: DistributedUIDGenerator, ns: UnityEngine.Localization.Tables,
+        asm: Unity.Localization}
+      data:
+        m_CustomEpoch: 1730385168033
