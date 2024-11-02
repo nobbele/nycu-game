@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Cinemachine;
 using UnityEngine;
 
@@ -32,7 +33,9 @@ public class Player : MonoBehaviour, IDamageHandler
 
     public bool IsDead => Health <= 0;
 
-    [SerializeField] private Transform attackRangeHint;
+    [SerializeField] private Transform attackRaycastHint;
+    [SerializeField] private float attackRange;
+    [SerializeField] private float attackRaycastRadius;
     [SerializeField] private HUD HUD;
     [SerializeField] private CharacterMenu CharacterMenu;
     //[SerializeField] private CinemachineFreeLook CinemachineFreeLook;
@@ -43,6 +46,8 @@ public class Player : MonoBehaviour, IDamageHandler
     {
         movementController = GetComponent<MovementController>();
         CharacterMenu.gameObject.SetActive(false);
+
+        movementController.attackAnimationSlash.AddListener(PerformAttack);
 
         CharacterMenu.DamageAttributeUI.Title = "Damage";
         CharacterMenu.DamageAttributeUI.Value = Attributes.Damage;
@@ -92,7 +97,7 @@ public class Player : MonoBehaviour, IDamageHandler
         if (!CharacterMenu.gameObject.activeInHierarchy) {
             // Input Handlers
             if (Input.GetMouseButtonDown(0))
-                Attack();
+                StartAttack();
 
             // Debug Input
             if (Input.GetKeyDown(KeyCode.U))
@@ -110,24 +115,32 @@ public class Player : MonoBehaviour, IDamageHandler
         }
     }
 
-    void Attack()
+    void StartAttack()
     {
         // StartCoroutine(movementController.co_FaceCameraForward());
         // if (!movementController.IsFacingCameraForward()) return;
         StartCoroutine(movementController.AttackAnimation());
-        
-        var rayVector = attackRangeHint.position - transform.position;
-        if (Physics.Raycast(
-            origin: transform.position,
-            direction: rayVector.normalized,
+    }
+
+    void PerformAttack() {
+        // This collision detection method is very suboptimal :(
+        // It doesn't take the animation into consideration at all.
+
+        if (Physics.SphereCast(
+            origin: attackRaycastHint.position,
+            direction: transform.forward,
+            radius: attackRaycastRadius,
             hitInfo: out RaycastHit hit,
-            maxDistance: rayVector.magnitude))
+            maxDistance: attackRange
+        ))
         {
             var gameObject = hit.collider.gameObject;
             if (gameObject.TryGetComponent(out IDamageHandler damageHandler))
             {
                 var damage = 10 + 2 * Attributes.Damage;
                 damageHandler.OnDamage(this.gameObject, damage);
+
+                Debug.Log($"Hit enemy {((MonoBehaviour)damageHandler).gameObject.name}");
 
                 // If our attack caused the enemy to die, gain some xp
                 if (damageHandler.IsDead) 
@@ -136,6 +149,13 @@ public class Player : MonoBehaviour, IDamageHandler
                 }
             }
         }
+    }
+
+    void OnDrawGizmosSelected() 
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(attackRaycastHint.position, attackRaycastHint.position + transform.forward * attackRange);
+        Gizmos.DrawWireSphere(attackRaycastHint.position + transform.forward * attackRange, attackRaycastRadius);
     }
 
     void LevelUp()

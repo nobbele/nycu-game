@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 900623861961126112}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 1.428, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -56,7 +56,7 @@ Transform:
   m_GameObject: {fileID: 2152431784275917922}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.856, z: 0}
+  m_LocalPosition: {x: 0, y: 0.121, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -123,7 +123,9 @@ MonoBehaviour:
     Speed: 0
     Stamina: 0
     Health: 0
-  attackRangeHint: {fileID: 9167848369548752298}
+  attackRaycastHint: {fileID: 9167848369548752298}
+  attackRange: 2
+  attackRaycastRadius: 0.5
   HUD: {fileID: 0}
   CharacterMenu: {fileID: 0}
 --- !u!114 &6439234488397710169
@@ -142,6 +144,9 @@ MonoBehaviour:
   rotationTracker: {fileID: 0}
   rotationSpeed: 800
   speed: 5
+  attackAnimationSlash:
+    m_PersistentCalls:
+      m_Calls: []
   DisabledMovement: 0
 --- !u!136 &1362524485240394361
 CapsuleCollider:
@@ -203,7 +208,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9167848369548752298}
   m_Layer: 0
-  m_Name: AttackRangeHint
+  m_Name: AttackRaycastHint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -218,7 +223,7 @@ Transform:
   m_GameObject: {fileID: 8728971435091524141}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 2.005}
+  m_LocalPosition: {x: 0, y: 1.404, z: 0.02}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

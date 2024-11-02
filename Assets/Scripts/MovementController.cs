@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(Rigidbody))]
 public class MovementController : MonoBehaviour
@@ -16,6 +17,8 @@ public class MovementController : MonoBehaviour
     public Quaternion CameraForwardRotation => Quaternion.Euler(0, rotationTracker.eulerAngles.y, 0);
     public Vector3 CameraForward => CameraForwardRotation * Vector3.forward;
     public Vector3 CameraRight => CameraForwardRotation * Vector3.right;
+
+    public UnityEvent attackAnimationSlash = new();
 
     public bool DisabledMovement;
     
@@ -116,10 +119,18 @@ public class MovementController : MonoBehaviour
             rigidbody.rotation = Quaternion.RotateTowards(rigidbody.rotation, attackRot, rotationSpeed * Time.deltaTime);
             yield return null;
         }
+
+        const float slashActionTime = 0.5f;
+        bool triggeredSlash = false;
         
         //Wait until the animation is over
         while (!animator.GetCurrentAnimatorStateInfo(0).IsName("Slash") || animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1)
         {
+            if (!triggeredSlash && animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= slashActionTime) 
+            {
+                attackAnimationSlash.Invoke();
+                triggeredSlash = true;
+            }
             yield return null;
         }
         
