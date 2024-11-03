@@ -91,7 +91,7 @@ public class Player : MonoBehaviour, IDamageHandler
 
         movementController.DisabledMovement = CharacterMenu.gameObject.activeInHierarchy;
 
-        if (Input.GetKeyDown(KeyCode.P))
+        if (Input.GetKeyDown(KeyCode.Escape))
             CharacterMenu.gameObject.SetActive(!CharacterMenu.gameObject.activeInHierarchy);
 
         if (!CharacterMenu.gameObject.activeInHierarchy) {
@@ -140,7 +140,7 @@ public class Player : MonoBehaviour, IDamageHandler
                 var damage = 10 + 2 * Attributes.Damage;
                 damageHandler.OnDamage(this.gameObject, damage);
 
-                Debug.Log($"Hit enemy {((MonoBehaviour)damageHandler).gameObject.name}");
+                Debug.Log($"Hit enemy {((MonoBehaviour)damageHandler).gameObject.name} with {damage}DMG");
 
                 // If our attack caused the enemy to die, gain some xp
                 if (damageHandler.IsDead) 
