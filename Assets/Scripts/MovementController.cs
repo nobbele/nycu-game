@@ -28,7 +28,7 @@ public class MovementController : MonoBehaviour
     //Rotation For Animation
     private Vector3 characterRotation = new (0, 0, 0);
     private Vector3 idleRotation = new (0, 15, 0);
-    private Vector3 faceFrontRotation = new (0, 30, 0);
+    private Vector3 faceFrontRotation = new (0, 40, 0);
     private Vector3 faceFrontLeftRotation = new (0, -20, 0);
     private Vector3 faceFrontRightRotation = new (0, 80, 0);
 
