@@ -33,12 +33,15 @@ public class Player : MonoBehaviour, IDamageHandler
 
     public bool IsDead => Health <= 0;
 
+    public Transform LookHint;
     [SerializeField] private Transform attackRaycastHint;
+    [SerializeField] private Camera minimapCamera;
+    [SerializeField] private Transform minimapCameraRotationTracker;
     [SerializeField] private float attackRange;
     [SerializeField] private float attackRaycastRadius;
     [SerializeField] private HUD HUD;
     [SerializeField] private CharacterMenu CharacterMenu;
-    //[SerializeField] private CinemachineFreeLook CinemachineFreeLook;
+    [SerializeField] private CinemachineFreeLook CinemachineFreeLook;
 
     private MovementController movementController;
 
@@ -91,7 +94,19 @@ public class Player : MonoBehaviour, IDamageHandler
 
         movementController.DisabledMovement = CharacterMenu.gameObject.activeInHierarchy;
 
-        if (Input.GetKeyDown(KeyCode.P))
+        var targetMinimapRotation = minimapCameraRotationTracker.rotation;
+        var targetMinimapRotationEulerAngles = targetMinimapRotation.eulerAngles;
+        targetMinimapRotationEulerAngles.x = 90;
+        targetMinimapRotation.eulerAngles = targetMinimapRotationEulerAngles;
+
+        Debug.Log(targetMinimapRotation);
+        // var minimapCameraRotation = minimapCamera.transform.rotation;
+        // var minimapCameraEulerAngles = minimapCameraRotation.eulerAngles;
+        // minimapCameraEulerAngles.y = targetMinimapRotation;
+        // minimapCameraRotation.eulerAngles = minimapCameraEulerAngles;
+        minimapCamera.transform.rotation = targetMinimapRotation;
+
+        if (Input.GetKeyDown(KeyCode.Escape))
             CharacterMenu.gameObject.SetActive(!CharacterMenu.gameObject.activeInHierarchy);
 
         if (!CharacterMenu.gameObject.activeInHierarchy) {
@@ -103,14 +118,14 @@ public class Player : MonoBehaviour, IDamageHandler
             if (Input.GetKeyDown(KeyCode.U))
                 Experience += 10;
 
-            // if (!CinemachineFreeLook.enabled) {
-            //     CinemachineFreeLook.enabled = true;
-            // }
+            if (!CinemachineFreeLook.enabled) {
+                CinemachineFreeLook.enabled = true;
+            }
             Cursor.lockState = CursorLockMode.Locked;
         } else {
-            // if (CinemachineFreeLook.enabled) {
-            //     CinemachineFreeLook.enabled = false;
-            // }
+            if (CinemachineFreeLook.enabled) {
+                CinemachineFreeLook.enabled = false;
+            }
             Cursor.lockState = CursorLockMode.None;
         }
     }
@@ -140,7 +155,7 @@ public class Player : MonoBehaviour, IDamageHandler
                 var damage = 10 + 2 * Attributes.Damage;
                 damageHandler.OnDamage(this.gameObject, damage);
 
-                Debug.Log($"Hit enemy {((MonoBehaviour)damageHandler).gameObject.name}");
+                Debug.Log($"Hit enemy {((MonoBehaviour)damageHandler).gameObject.name} with {damage}DMG");
 
                 // If our attack caused the enemy to die, gain some xp
                 if (damageHandler.IsDead) 

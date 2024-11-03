@@ -61,15 +61,12 @@ public class MovementController : MonoBehaviour
     void Update()
     {
         if (DisabledMovement) {
-            Cursor.lockState = CursorLockMode.None;
             return;
         }
 
         // Handle cursor locking
         if (Input.GetMouseButtonDown(0))
             Cursor.lockState = CursorLockMode.Locked;
-        if (Input.GetKeyDown(KeyCode.Escape))
-            Cursor.lockState = CursorLockMode.None;
     }
 
     public bool IsFacingCameraForward() => IsFacing(transform.position + CameraForward);
