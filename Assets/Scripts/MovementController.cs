@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 [RequireComponent(typeof(Rigidbody))]
 public class MovementController : MonoBehaviour
@@ -12,7 +13,9 @@ public class MovementController : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private Transform rotationTracker;
     [SerializeField] private float rotationSpeed = 400f;
-    [SerializeField] private float speed = 3;
+    [SerializeField] private float forwardSpeed = 5;
+    [SerializeField] private float backwardSpeed = 3;
+    [SerializeField] private float strafeSpeed = 4;
     
     public Quaternion CameraForwardRotation => Quaternion.Euler(0, rotationTracker.eulerAngles.y, 0);
     public Vector3 CameraForward => CameraForwardRotation * Vector3.forward;
@@ -143,47 +146,42 @@ public class MovementController : MonoBehaviour
         if (animator.GetBool("IsDoingAnimation")) return;
         
         Vector3 movement = Vector3.zero;
-        
-        
         Quaternion toRot = frontRot;
-
+        float speed = strafeSpeed;
+        
+        //Determining direction of movement and rotation
+        if (Input.GetKey(keybinds["Forward"]) || Input.GetKey(keybinds["Backward"]))
+        {
+            if (Input.GetKey(keybinds["Forward"]))
+            {
+                movement += CameraForward;
+                speed = forwardSpeed;
+                if (Input.GetKey(keybinds["Left"]))
+                    toRot = frontLeftRot;
+                if (Input.GetKey(keybinds["Right"]))
+                    toRot = frontRightRot;
+            }
+            if (Input.GetKey(keybinds["Backward"]))
+            {
+                movement += -CameraForward;
+                speed = backwardSpeed;
+                if (Input.GetKey(keybinds["Left"]))
+                    toRot = frontRightRot;
+                if (Input.GetKey(keybinds["Right"]))
+                    toRot = frontLeftRot;
+            }
+        }
+        
         if (Input.GetKey(keybinds["Left"]))
             movement += -CameraRight;
         if (Input.GetKey(keybinds["Right"]))
             movement += CameraRight;
-        if (Input.GetKey(keybinds["Forward"]))
-            movement += CameraForward;
-        if (Input.GetKey(keybinds["Backward"]))
-            movement += -CameraForward;
 
         movement.Normalize();
         movement *= speed * Time.deltaTime;
         rigidbody.position += movement;
-
-        //Is moving forward or backward
-        if (Input.GetKey(keybinds["Forward"]) || Input.GetKey(keybinds["Backward"]))
-        {
-            //Is moving forward
-            if (Input.GetKey(keybinds["Forward"]))
-            {
-                if (Input.GetKey(keybinds["Left"]))
-                    toRot = frontLeftRot;
-                if (Input.GetKey(keybinds["Right"]))
-                    toRot = frontRightRot;
-            }
-            //Is moving backward
-            if (Input.GetKey(keybinds["Backward"]))
-            {
-                if (Input.GetKey(keybinds["Left"]))
-                    toRot = frontRightRot;
-                if (Input.GetKey(keybinds["Right"]))
-                    toRot = frontLeftRot;
-            }
-            //If both left and right key are pressed
-            if (Input.GetKey(keybinds["Left"]) && Input.GetKey(keybinds["Right"]))
-                toRot = frontRot;
-        }
         
+        //Rotating and enabling animation
         animator.SetBool("IsMoving", false);
         if (movement.sqrMagnitude > 0)
         {
