@@ -28,11 +28,13 @@ public class MovementController : MonoBehaviour
     //Rotation For Animation
     private Vector3 characterRotation = new (0, 0, 0);
     private Vector3 idleRotation = new (0, 15, 0);
-    private Vector3 faceFrontRotation = new (0, 40, 0);
+    private Vector3 runForwardRotation = new (0, 40, 0);
+    private Vector3 runBackwardRotation = new(0, 30, 0);
     private Vector3 faceFrontLeftRotation = new (0, -20, 0);
     private Vector3 faceFrontRightRotation = new (0, 80, 0);
 
-    private Quaternion frontRot => Quaternion.Euler(CameraForwardRotation.eulerAngles + faceFrontRotation);
+    private Quaternion forwardRot => Quaternion.Euler(CameraForwardRotation.eulerAngles + runForwardRotation);
+    private Quaternion backwardRot => Quaternion.Euler(CameraForwardRotation.eulerAngles + runBackwardRotation);
     private Quaternion frontLeftRot => Quaternion.Euler(CameraForwardRotation.eulerAngles + faceFrontLeftRotation);
     private Quaternion frontRightRot => Quaternion.Euler(CameraForwardRotation.eulerAngles + faceFrontRightRotation);
     private Quaternion idleRot => Quaternion.Euler(characterRotation + idleRotation);
@@ -146,7 +148,7 @@ public class MovementController : MonoBehaviour
         if (animator.GetBool("IsDoingAnimation")) return;
         
         Vector3 movement = Vector3.zero;
-        Quaternion toRot = frontRot;
+        Quaternion toRot = idleRot;
         float speed = strafeSpeed;
         
         //Determining direction of movement and rotation
@@ -156,6 +158,7 @@ public class MovementController : MonoBehaviour
             {
                 movement += CameraForward;
                 speed = forwardSpeed;
+                toRot = forwardRot;
                 if (Input.GetKey(keybinds["Left"]))
                     toRot = frontLeftRot;
                 if (Input.GetKey(keybinds["Right"]))
@@ -165,6 +168,7 @@ public class MovementController : MonoBehaviour
             {
                 movement += -CameraForward;
                 speed = backwardSpeed;
+                toRot = backwardRot;
                 if (Input.GetKey(keybinds["Left"]))
                     toRot = frontRightRot;
                 if (Input.GetKey(keybinds["Right"]))
