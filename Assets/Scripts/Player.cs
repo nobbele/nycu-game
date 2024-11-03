@@ -33,7 +33,10 @@ public class Player : MonoBehaviour, IDamageHandler
 
     public bool IsDead => Health <= 0;
 
+    public Transform LookHint;
     [SerializeField] private Transform attackRaycastHint;
+    [SerializeField] private Camera minimapCamera;
+    [SerializeField] private PlayerCamera playerCamera;
     [SerializeField] private float attackRange;
     [SerializeField] private float attackRaycastRadius;
     [SerializeField] private HUD HUD;
@@ -90,6 +93,14 @@ public class Player : MonoBehaviour, IDamageHandler
         CharacterMenu.AttributePointsLeftText.text = $"Points Left: {AttributePoints}";
 
         movementController.DisabledMovement = CharacterMenu.gameObject.activeInHierarchy;
+
+        var targetMinimapRotation = playerCamera.rotY;
+        Debug.Log(targetMinimapRotation);
+        var minimapCameraRotation = minimapCamera.transform.rotation;
+        var minimapCameraEulerAngles = minimapCameraRotation.eulerAngles;
+        minimapCameraEulerAngles.y = targetMinimapRotation;
+        minimapCameraRotation.eulerAngles = minimapCameraEulerAngles;
+        minimapCamera.transform.rotation = minimapCameraRotation;
 
         if (Input.GetKeyDown(KeyCode.Escape))
             CharacterMenu.gameObject.SetActive(!CharacterMenu.gameObject.activeInHierarchy);

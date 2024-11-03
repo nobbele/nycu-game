@@ -4,17 +4,17 @@ using UnityEngine;
 public class PlayerCamera : MonoBehaviour
 {
     [SerializeField] private float sensitivity;
-    [SerializeField] private Transform player;
+    [SerializeField] private Player player;
     private Vector3 distanceOffset;
-    private float rotX, rotY;
+    public float rotX, rotY;
     private void Start()
     {
-        distanceOffset = player.position - transform.position;
+        distanceOffset = player.LookHint.position - transform.position;
     }
 
     private void Update()
     {
-        transform.position = player.position - distanceOffset;
+        transform.position = player.LookHint.position - distanceOffset;
         
         if (Cursor.lockState != CursorLockMode.Locked)
             return;
@@ -25,7 +25,10 @@ public class PlayerCamera : MonoBehaviour
         rotY += mouseX;
         rotX -= mouseY;
 
+        static float Mod(float x, float m) => (x%m + m)%m;
+
         rotX = Math.Clamp(rotX, -90, 90);
+        rotY = Mod(rotY, 360);
         transform.eulerAngles = new Vector3(rotX, rotY, 0);
     }
 }
