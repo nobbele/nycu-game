@@ -36,12 +36,12 @@ public class Player : MonoBehaviour, IDamageHandler
     public Transform LookHint;
     [SerializeField] private Transform attackRaycastHint;
     [SerializeField] private Camera minimapCamera;
-    [SerializeField] private PlayerCamera playerCamera;
+    [SerializeField] private Transform minimapCameraRotationTracker;
     [SerializeField] private float attackRange;
     [SerializeField] private float attackRaycastRadius;
     [SerializeField] private HUD HUD;
     [SerializeField] private CharacterMenu CharacterMenu;
-    //[SerializeField] private CinemachineFreeLook CinemachineFreeLook;
+    [SerializeField] private CinemachineFreeLook CinemachineFreeLook;
 
     private MovementController movementController;
 
@@ -94,13 +94,17 @@ public class Player : MonoBehaviour, IDamageHandler
 
         movementController.DisabledMovement = CharacterMenu.gameObject.activeInHierarchy;
 
-        var targetMinimapRotation = playerCamera.rotY;
+        var targetMinimapRotation = minimapCameraRotationTracker.rotation;
+        var targetMinimapRotationEulerAngles = targetMinimapRotation.eulerAngles;
+        targetMinimapRotationEulerAngles.x = 90;
+        targetMinimapRotation.eulerAngles = targetMinimapRotationEulerAngles;
+
         Debug.Log(targetMinimapRotation);
-        var minimapCameraRotation = minimapCamera.transform.rotation;
-        var minimapCameraEulerAngles = minimapCameraRotation.eulerAngles;
-        minimapCameraEulerAngles.y = targetMinimapRotation;
-        minimapCameraRotation.eulerAngles = minimapCameraEulerAngles;
-        minimapCamera.transform.rotation = minimapCameraRotation;
+        // var minimapCameraRotation = minimapCamera.transform.rotation;
+        // var minimapCameraEulerAngles = minimapCameraRotation.eulerAngles;
+        // minimapCameraEulerAngles.y = targetMinimapRotation;
+        // minimapCameraRotation.eulerAngles = minimapCameraEulerAngles;
+        minimapCamera.transform.rotation = targetMinimapRotation;
 
         if (Input.GetKeyDown(KeyCode.Escape))
             CharacterMenu.gameObject.SetActive(!CharacterMenu.gameObject.activeInHierarchy);
@@ -114,14 +118,14 @@ public class Player : MonoBehaviour, IDamageHandler
             if (Input.GetKeyDown(KeyCode.U))
                 Experience += 10;
 
-            // if (!CinemachineFreeLook.enabled) {
-            //     CinemachineFreeLook.enabled = true;
-            // }
+            if (!CinemachineFreeLook.enabled) {
+                CinemachineFreeLook.enabled = true;
+            }
             Cursor.lockState = CursorLockMode.Locked;
         } else {
-            // if (CinemachineFreeLook.enabled) {
-            //     CinemachineFreeLook.enabled = false;
-            // }
+            if (CinemachineFreeLook.enabled) {
+                CinemachineFreeLook.enabled = false;
+            }
             Cursor.lockState = CursorLockMode.None;
         }
     }
