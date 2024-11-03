@@ -188,11 +188,16 @@ public class MovementController : MonoBehaviour
         if (movement.sqrMagnitude > 0)
         {
             animator.SetBool("IsMoving", true);
+            animator.applyRootMotion = false;
             rigidbody.rotation = Quaternion.RotateTowards(rigidbody.rotation, toRot, rotationSpeed * Time.deltaTime);
             characterRotation = CameraForwardRotation.eulerAngles;
         }
         else
+        {
+            animator.applyRootMotion = true;
             rigidbody.rotation = idleRot;
+        }
+            
         
         animator.SetBool("IsRunningForward", Input.GetKey(keybinds["Forward"]) && animator.GetBool("IsMoving"));
         animator.SetBool("IsRunningBackward", Input.GetKey(keybinds["Backward"]) && animator.GetBool("IsMoving"));
