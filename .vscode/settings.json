@@ -72,5 +72,5 @@
         "keybinds",
         "Prefs"
     ],
-    "dotnet.preferCSharpExtension": false
+    "dotnet.preferCSharpExtension": true
 }
