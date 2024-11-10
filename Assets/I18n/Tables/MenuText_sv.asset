@@ -70,6 +70,10 @@ MonoBehaviour:
     m_Localized: "St\xE4ng"
     m_Metadata:
       m_Items: []
+  - m_Id: 1184720600182784
+    m_Localized: Nyckelbindningar
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []
