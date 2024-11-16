@@ -99,7 +99,7 @@ public class Player : MonoBehaviour, IDamageHandler
         targetMinimapRotationEulerAngles.x = 90;
         targetMinimapRotation.eulerAngles = targetMinimapRotationEulerAngles;
 
-        Debug.Log(targetMinimapRotation);
+        // Debug.Log(targetMinimapRotation);
         // var minimapCameraRotation = minimapCamera.transform.rotation;
         // var minimapCameraEulerAngles = minimapCameraRotation.eulerAngles;
         // minimapCameraEulerAngles.y = targetMinimapRotation;
