@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.Serialization;
 
 [RequireComponent(typeof(Rigidbody))]
 public class MovementController : MonoBehaviour
@@ -38,7 +37,8 @@ public class MovementController : MonoBehaviour
     private Quaternion frontLeftRot => Quaternion.Euler(CameraForwardRotation.eulerAngles + faceFrontLeftRotation);
     private Quaternion frontRightRot => Quaternion.Euler(CameraForwardRotation.eulerAngles + faceFrontRightRotation);
     private Quaternion idleRot => Quaternion.Euler(characterRotation + idleRotation);
-    
+
+    private float SpeedMultiplier = 1;
     
     private Dictionary<string, KeyCode> keybinds = new Dictionary<string, KeyCode>
     {
@@ -182,7 +182,7 @@ public class MovementController : MonoBehaviour
             movement += CameraRight;
 
         movement.Normalize();
-        movement *= speed * Time.deltaTime;
+        movement *= speed * SpeedMultiplier * Time.deltaTime;
         rigidbody.position += movement;
         
         //Rotating and enabling animation
@@ -210,5 +210,17 @@ public class MovementController : MonoBehaviour
         {
             return !Input.GetKey(keybinds["Forward"]) && !Input.GetKey(keybinds["Backward"]) && Input.GetKey(keybinds[s]);
         }
+    }
+
+    public void MultiplySpeedMultiplier(float multiplier)
+    {
+        SpeedMultiplier *= multiplier;
+        animator.SetFloat("SpeedMultiplier", SpeedMultiplier);
+    }
+    
+    public void DivideSpeedMultiplier(float multiplier)
+    {
+        SpeedMultiplier /= multiplier;
+        animator.SetFloat("SpeedMultiplier", SpeedMultiplier);
     }
 }
