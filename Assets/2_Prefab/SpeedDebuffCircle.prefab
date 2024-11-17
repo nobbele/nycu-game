@@ -15743,7 +15743,7 @@ ParticleSystem:
           m_PreInfinity: 2
           m_PostInfinity: 2
           m_RotationOrder: 4
-      cycleCount: 100
+      cycleCount: 150
       repeatInterval: 0.03
       probability: 1
   SizeModule:
@@ -16328,8 +16328,8 @@ ParticleSystem:
     y:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 2
-      minScalar: 3
+      scalar: 3
+      minScalar: 4
       maxCurve:
         serializedVersion: 2
         m_Curve:
