@@ -21,6 +21,8 @@ public class MovementController : MonoBehaviour
     public Vector3 CameraRight => CameraForwardRotation * Vector3.right;
 
     public UnityEvent attackAnimationSlash = new();
+    private float comboResetTime = 0.4F;
+    private float comboTimer = 0.4f;
 
     public bool DisabledMovement;
     
@@ -39,6 +41,8 @@ public class MovementController : MonoBehaviour
     private Quaternion idleRot => Quaternion.Euler(characterRotation + idleRotation);
 
     private float SpeedMultiplier = 1;
+
+    private Vector3 prevChildPos;
     
     private Dictionary<string, KeyCode> keybinds = new Dictionary<string, KeyCode>
     {
@@ -51,7 +55,7 @@ public class MovementController : MonoBehaviour
     void Start()
     {
         rigidbody = GetComponent<Rigidbody>();
-
+        
         var updatedKeybinds = new Dictionary<string, KeyCode>();
 
         foreach (var key in keybinds.Keys)
@@ -72,6 +76,24 @@ public class MovementController : MonoBehaviour
         // Handle cursor locking
         if (Input.GetMouseButtonDown(0))
             Cursor.lockState = CursorLockMode.Locked;
+        
+        // Get the child’s root motion delta
+        Vector3 motionDelta = animator.transform.position - transform.position;
+        prevChildPos = animator.transform.position;
+        // Apply the child’s root motion to the parent
+        transform.position += motionDelta;
+        animator.transform.position = prevChildPos;
+
+        if (animator.GetInteger("ComboIndex") >= 1)
+        {
+            comboTimer -= Time.deltaTime;
+
+            if (comboTimer <= 0.0f)
+            {
+                animator.SetInteger("ComboIndex", 0);
+                comboTimer = comboResetTime;
+            }
+        }
     }
 
     public bool IsFacingCameraForward() => IsFacing(transform.position + CameraForward);
@@ -103,15 +125,15 @@ public class MovementController : MonoBehaviour
         faceTowardsRunning = false;
     }
 
-    public IEnumerator AttackAnimation()
+    public IEnumerator SlashComboAnimation()
     {
         if (animator.GetBool("IsDoingAnimation")) yield break;
         
         //Enabling the animation
         animator.applyRootMotion = true;
         animator.SetBool("IsDoingAnimation",true);
-        animator.SetBool("IsSlashing", true);
         animator.SetBool("IsMoving", false);
+        animator.SetBool("IsSlashing", true);
         
         //Setting Rotation
         characterRotation = CameraForwardRotation.eulerAngles;
@@ -124,22 +146,45 @@ public class MovementController : MonoBehaviour
 
         const float slashActionTime = 0.5f;
         bool triggeredSlash = false;
-        
+        AnimatorStateInfo stateInfo;
         //Wait until the animation is over
-        while (!animator.GetCurrentAnimatorStateInfo(0).IsName("Slash") || animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1)
+        while (true)
         {
-            if (!triggeredSlash && animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= slashActionTime) 
+            comboTimer = comboResetTime;
+            
+            stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        
+            if (IsSlashState() && stateInfo.normalizedTime >= slashActionTime && !triggeredSlash)
             {
-                attackAnimationSlash.Invoke();
                 triggeredSlash = true;
+                attackAnimationSlash.Invoke();
             }
+
+            if (stateInfo.normalizedTime >= 1.0f)  // Check if the animation is complete
+                break;
+            
             yield return null;
         }
         
         //Disabling the animation
         animator.applyRootMotion = false;
-        animator.SetBool("IsSlashing", false);
         animator.SetBool("IsDoingAnimation",false);
+        animator.SetBool("IsSlashing", false);
+        
+        animator.SetInteger("ComboIndex", animator.GetInteger("ComboIndex") + 1);
+        
+        if (animator.GetInteger("ComboIndex") >= 3)
+            animator.SetInteger("ComboIndex", 0);
+        
+        comboTimer = comboResetTime;
+
+        bool IsSlashState()
+        {
+            AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+            if (stateInfo.IsName("Slash") || stateInfo.IsName("Slash 2") || stateInfo.IsName("Slash 3"))
+                return true;
+            return false;
+        }
     }
 
     void FixedUpdate()
