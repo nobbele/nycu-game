@@ -79,6 +79,7 @@ public class MovementController : MonoBehaviour
         
         // Get the child’s root motion delta
         Vector3 motionDelta = animator.transform.position - transform.position;
+        motionDelta.y = 0;
         prevChildPos = animator.transform.position;
         // Apply the child’s root motion to the parent
         transform.position += motionDelta;
