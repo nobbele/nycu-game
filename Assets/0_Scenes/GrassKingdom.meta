@@ -1,6 +1,10 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/0_Scenes/GrassKingdom.meta
 guid: ca7693c5852145ad1a5e6a10be0204f2
 folderAsset: yes
+========
+guid: 5a27dd6c26da62c4782f7e68c54ab247
+>>>>>>>> 8a3effbf87d3330546ac7bafa6a3329de7077bf3:Assets/ThirdPartyAssets/Characters/Giant Golem/Characters/Humanoid Giant/Demo Scene/Giant Animations - Demo Scene.unity.meta
 DefaultImporter:
   externalObjects: {}
   userData: 

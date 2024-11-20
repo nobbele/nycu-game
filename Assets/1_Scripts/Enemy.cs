@@ -1,12 +1,24 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour, IDamageHandler
 {
-    public int Health = 20;
-
+    public EnemyData enemyData;
+    public int Health;
     public bool IsDead => Health <= 0;
+    public event Action onDeath;
+    public GameObject meshInstance;
+
+    void Start()
+    {
+        Health = enemyData.health;
+        if (enemyData.enemyMesh != null)
+        {
+            meshInstance = Instantiate(enemyData.enemyMesh, transform.position, Quaternion.identity, transform);
+            Animator animator = meshInstance.GetComponent<Animator>();
+            animator.runtimeAnimatorController = enemyData.animatorController;
+        }
+    }
 
     void Update()
     {
@@ -16,8 +28,8 @@ public class Enemy : MonoBehaviour, IDamageHandler
 
     void OnDead()
     {
-        // TODO Death effect
-        Destroy(gameObject);
+        onDeath?.Invoke();
+        Destroy(gameObject, 2f);
     }
 
     public void OnDamage(GameObject source, int damage)
@@ -25,7 +37,5 @@ public class Enemy : MonoBehaviour, IDamageHandler
         if (source == this) return;
 
         Health -= damage;
-        // TODO i-frames
-        // TODO Damage effect
     }
 }

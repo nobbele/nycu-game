@@ -129,7 +129,7 @@ public class Player : MonoBehaviour, IDamageHandler
     {
         // StartCoroutine(movementController.co_FaceCameraForward());
         // if (!movementController.IsFacingCameraForward()) return;
-        StartCoroutine(movementController.AttackAnimation());
+        StartCoroutine(movementController.SlashComboAnimation());
     }
 
     void PerformAttack() {

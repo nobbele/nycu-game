@@ -152,8 +152,6 @@ MonoBehaviour:
   moveInterval: 3
   attackInterval: 1.5
   attackDamage: 10
-  moveSpeed: 2
-  gridSize: 1
 --- !u!114 &5374150996595182526
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,11 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
-public class EnemySpawner : MonoBehaviour {
-    public GameObject enemyPrefab;
+public class EnemySpawner : MonoBehaviour
+{
+    public EnemyData enemyData;
     public Transform spawnCenter;
-
     public float spawnRadius = 5f;
     public float spawnInterval = 3f;
     public int maxEnemies = 3;
@@ -13,29 +12,52 @@ public class EnemySpawner : MonoBehaviour {
     private int currentEnemies = 0;
     private float timeSinceLastSpawn = 0f;
 
-    void Update() {
+    void Update()
+    {
         timeSinceLastSpawn += Time.deltaTime;
-        if (timeSinceLastSpawn >= spawnInterval && currentEnemies < maxEnemies) {
+        if (timeSinceLastSpawn >= spawnInterval && currentEnemies < maxEnemies)
+        {
             SpawnEnemy();
             timeSinceLastSpawn = 0f;
         }
     }
 
-    void SpawnEnemy() {
+    void SpawnEnemy()
+    {
         Vector3 spawnPosition = spawnCenter.position + (Random.insideUnitSphere * spawnRadius);
         spawnPosition.y = spawnCenter.position.y;
 
-        GameObject enemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
+        GameObject enemy = new GameObject("Enemy");
+        enemy.transform.position = spawnPosition;        
 
-        EnemyAI enemyAI = enemy.GetComponent<EnemyAI>();
-        if (enemyAI != null) {
-            enemyAI.spawnPoint = spawnCenter;
-            enemyAI.player = GameObject.FindWithTag("Player").transform;
-        }
+        // Enemy
+        Enemy enemyScript = enemy.AddComponent<Enemy>();
+        enemyScript.enemyData = enemyData;
+        enemyScript.onDeath += OnEnemyDeath;
+
+        // Enemy AI
+        EnemyAI enemyAI = enemy.AddComponent<EnemyAI>();
+        enemyAI.enemyData = enemyData;
+        enemyAI.player = GameObject.FindWithTag("Player").transform;
+        enemyAI.spawnPoint = spawnCenter;
+
+        // Nav Mesh Agent
+        NavMeshAgent navMeshAgent = enemy.AddComponent<NavMeshAgent>();
+        navMeshAgent.speed = 3.5f;
+
+        // Collider
+        CapsuleCollider collider = enemy.AddComponent<CapsuleCollider>();
+        collider.height = 2;
+
         currentEnemies++;
     }
 
-    void OnDrawGizmos()
+    void OnEnemyDeath()
+    {
+        currentEnemies--;
+    }
+
+        void OnDrawGizmos()
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(spawnCenter.transform.position, spawnRadius);
