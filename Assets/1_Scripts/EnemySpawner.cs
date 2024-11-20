@@ -23,7 +23,7 @@ public class EnemySpawner : MonoBehaviour {
 
     void SpawnEnemy() {
         Vector3 spawnPosition = spawnCenter.position + (Random.insideUnitSphere * spawnRadius);
-        spawnPosition.y = 1f;
+        spawnPosition.y = spawnCenter.position.y;
 
         GameObject enemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
 
@@ -33,5 +33,11 @@ public class EnemySpawner : MonoBehaviour {
             enemyAI.player = GameObject.FindWithTag("Player").transform;
         }
         currentEnemies++;
+    }
+
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(spawnCenter.transform.position, spawnRadius);
     }
 }
