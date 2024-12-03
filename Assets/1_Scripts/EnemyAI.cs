@@ -40,20 +40,20 @@ public class EnemyAI : MonoBehaviour
 
     void ChasePlayer()
     {
-        animator.SetBool("IsMoving", true);
+        if (animator != null) animator.SetBool("IsMoving", true);
         agent.SetDestination(player.position);
     }
 
     void AttackPlayer()
     {
-        animator.SetBool("IsMoving", false);
+        if (animator != null) animator.SetBool("IsMoving", false);
 
         agent.SetDestination(transform.position);
         timeSinceLastAttack += Time.deltaTime;
 
         if (timeSinceLastAttack >= enemyData.attackInterval)
         {
-            animator.SetTrigger("Attack");
+            if (animator != null) animator.SetTrigger("Attack");
 
             if (player.TryGetComponent(out IDamageHandler damageHandler))
             {
@@ -79,7 +79,7 @@ public class EnemyAI : MonoBehaviour
 
     void WanderAroundSpawnPoint()
     {
-        animator.SetBool("IsMoving", true);
+        if (animator != null) animator.SetBool("IsMoving", true);
 
         timeSinceLastMove += Time.deltaTime;
         if (timeSinceLastMove >= enemyData.moveInterval)
@@ -99,7 +99,7 @@ public class EnemyAI : MonoBehaviour
 
         if (agent.remainingDistance <= agent.stoppingDistance + 1f)
         {
-            animator.SetBool("IsMoving", false);
+            if (animator != null) animator.SetBool("IsMoving", false);
         }
     }
 }
