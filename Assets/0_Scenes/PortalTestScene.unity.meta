@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/0_Scenes/GrassKingdom.unity.meta
+guid: 24a4e50ff2e7e79e5ac7fd6825766325
+========
 guid: 2b68a8eeff19d474f9cc7883f7d0c8d7
+>>>>>>>> 8a3effbf87d3330546ac7bafa6a3329de7077bf3:Assets/0_Scenes/PortalTestScene.unity.meta
 DefaultImporter:
   externalObjects: {}
   userData: 
