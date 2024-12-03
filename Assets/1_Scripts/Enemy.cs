@@ -10,7 +10,7 @@ public class Enemy : MonoBehaviour, IDamageHandler
     public event Action onDeath;
     public GameObject meshInstance;
 
-    public static void SpawnAt(Vector3 spawnPosition, EnemyData enemyData, Transform spawnerCenter, Action OnEnemyDeath) {
+    public static void SpawnAt(Vector3 spawnPosition, EnemyData enemyData, Transform spawnerCenter, Action OnEnemyDeath, GameObject spawnEffectPrefab = null) {
         GameObject enemy = new GameObject("Enemy");
         enemy.transform.position = spawnPosition;        
 
@@ -32,6 +32,13 @@ public class Enemy : MonoBehaviour, IDamageHandler
         // Collider
         CapsuleCollider collider = enemy.AddComponent<CapsuleCollider>();
         collider.height = 2;
+
+        // Spawning Particle
+        var spawnEffect = Instantiate(spawnEffectPrefab);
+        spawnEffect.transform.position = spawnPosition + Vector3.up * 1f; 
+        spawnEffect.transform.Translate(Vector3.up * 2f);
+        spawnEffect.GetComponent<ParticleSystem>().Play();
+        spawnEffect.GetComponent<AudioSource>().Play();
     }
 
     void Start()

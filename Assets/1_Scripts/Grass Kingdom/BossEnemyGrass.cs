@@ -1,17 +1,22 @@
 
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BossEnemyGrass : BossEnemy<BossEnemyStageGrass>
 {
     private float minionSpawnTimer = 0;
+    private float fireBreathTimer = 0;
 
     public Transform spawnCenter;
     public float spawnRadius;
 
+    public ParticleSystem fireBreathingParticleSystem;
+    public AudioSource fireBreathingSoundEffect;
+    public GameObject spawnEffectPrefab;
+
     protected override void OnBossActivated()  {
         Debug.Log("Grass!!");
         minionSpawnTimer = CurrentStage.minionSpawnDist.Sample();
+        fireBreathTimer = CurrentStage.fireBreathDist.Sample();
     }
 
     public override void Update() {
@@ -23,6 +28,17 @@ public class BossEnemyGrass : BossEnemy<BossEnemyStageGrass>
             minionSpawnTimer = CurrentStage.minionSpawnDist.Sample();
             SpawnMinion();
         }
+
+        fireBreathTimer -= Time.deltaTime;
+        if (fireBreathTimer <= 0) {
+            fireBreathTimer = CurrentStage.fireBreathDist.Sample();
+            BreathFire();
+        }
+    }
+
+    void BreathFire() {
+        fireBreathingParticleSystem.Play();
+        fireBreathingSoundEffect.Play();
     }
 
     void SpawnMinion() {
@@ -31,7 +47,7 @@ public class BossEnemyGrass : BossEnemy<BossEnemyStageGrass>
         spawnPosition.y = spawnCenter.position.y;
 
         var randomIndex = Random.Range(0, CurrentStage.enemyData.Count);
-        Enemy.SpawnAt(spawnPosition, CurrentStage.enemyData[randomIndex], spawnCenter, () => {});
+        Enemy.SpawnAt(spawnPosition, CurrentStage.enemyData[randomIndex], spawnCenter, () => {}, spawnEffectPrefab);
     }
 
     void OnDrawGizmos()
