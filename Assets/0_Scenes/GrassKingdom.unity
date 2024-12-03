@@ -594,9 +594,11 @@ MonoBehaviour:
   IsStageActive: 0
   minionSpawnDist:
     Mean: 3
-    Variance: 0
+    Variance: 2
     Min: 0
-    Max: 10
+    Max: 20
+  enemyData:
+  - {fileID: 234915455}
 --- !u!1 &281587547
 GameObject:
   m_ObjectHideFlags: 0
@@ -865,6 +867,8 @@ MonoBehaviour:
     Variance: 2
     Min: 0
     Max: 20
+  enemyData:
+  - {fileID: 234915455}
 --- !u!1001 &366238011
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1951,10 +1955,12 @@ MonoBehaviour:
   HealthTrigger: 75
   IsStageActive: 0
   minionSpawnDist:
-    Mean: 3
-    Variance: 0
+    Mean: 4
+    Variance: 2
     Min: 0
-    Max: 10
+    Max: 20
+  enemyData:
+  - {fileID: 234915455}
 --- !u!1 &924147029 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 135744, guid: 4e7d7ecd1eafb1746a1fcb020505943c,
@@ -2001,8 +2007,6 @@ MonoBehaviour:
   - {fileID: 361566073}
   - {fileID: 884183212}
   - {fileID: 275973485}
-  enemyData:
-  - {fileID: 234915455}
   spawnCenter: {fileID: 1027252682}
   spawnRadius: 20
 --- !u!4 &982267212 stripped

@@ -6,8 +6,6 @@ public class BossEnemyGrass : BossEnemy<BossEnemyStageGrass>
 {
     private float minionSpawnTimer = 0;
 
-    public List<EnemyData> enemyData;
-
     public Transform spawnCenter;
     public float spawnRadius;
 
@@ -32,7 +30,8 @@ public class BossEnemyGrass : BossEnemy<BossEnemyStageGrass>
         Vector3 spawnPosition = spawnCenter.position + (Random.insideUnitSphere * spawnRadius);
         spawnPosition.y = spawnCenter.position.y;
 
-        Enemy.SpawnAt(spawnPosition, enemyData[0], spawnCenter, () => {});
+        var randomIndex = Random.Range(0, CurrentStage.enemyData.Count);
+        Enemy.SpawnAt(spawnPosition, CurrentStage.enemyData[randomIndex], spawnCenter, () => {});
     }
 
     void OnDrawGizmos()
