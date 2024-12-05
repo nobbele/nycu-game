@@ -97,35 +97,6 @@ public class MovementController : MonoBehaviour
         }
     }
 
-    public bool IsFacingCameraForward() => IsFacing(transform.position + CameraForward);
-    public bool IsFacing(Vector3 target)
-    {
-        var quat = Quaternion.LookRotation((target - transform.position).normalized);
-        quat.eulerAngles = new Vector3(0, quat.eulerAngles.y, 0);
-
-        // +- 10 degrees of leniency
-        return Mathf.Abs(rigidbody.rotation.eulerAngles.y - quat.eulerAngles.y) < 10f;
-    }
-
-    private bool faceTowardsRunning = false;
-    public IEnumerator co_FaceCameraForward() => co_FaceTowardsTarget(transform.position + CameraForward);
-    public IEnumerator co_FaceTowardsTarget(Vector3 target)
-    {
-        if (faceTowardsRunning) yield break;
-        faceTowardsRunning = true;
-
-        var quat = Quaternion.LookRotation((target - transform.position).normalized);
-        quat.eulerAngles = new Vector3(0, quat.eulerAngles.y, 0);
-
-        while (rigidbody.rotation.eulerAngles.y != quat.eulerAngles.y)
-        {
-            rigidbody.rotation = Quaternion.RotateTowards(rigidbody.rotation, quat, rotationSpeed * Time.deltaTime);
-            yield return null;
-        }
-
-        faceTowardsRunning = false;
-    }
-
     public IEnumerator SlashComboAnimation()
     {
         if (animator.GetBool("IsDoingAnimation")) yield break;

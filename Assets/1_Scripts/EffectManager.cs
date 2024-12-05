@@ -5,7 +5,7 @@ using UnityEngine;
 public class EffectManager : MonoBehaviour
 {
     private MovementController movementController;
-    private List<EffectInstance> activeEffects = new List<EffectInstance>();
+    [SerializeField] private List<EffectInstance> activeEffects = new List<EffectInstance>();
 
     private void Start()
     {
