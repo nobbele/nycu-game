@@ -21,8 +21,10 @@ public class MovementController : MonoBehaviour
     public Vector3 CameraRight => CameraForwardRotation * Vector3.right;
 
     public UnityEvent attackAnimationSlash = new();
-    private float comboResetTime = 0.4F;
-    private float comboTimer = 0.4f;
+    private bool doSlash;
+    private int comboIndex;
+    private float comboResetTime = 0.4f;
+    private float comboTimer;
 
     public bool DisabledMovement;
     
@@ -76,93 +78,58 @@ public class MovementController : MonoBehaviour
         // Handle cursor locking
         if (Input.GetMouseButtonDown(0))
             Cursor.lockState = CursorLockMode.Locked;
-        
-        // Get the child’s root motion delta
-        Vector3 motionDelta = animator.transform.position - transform.position;
-        motionDelta.y = 0;
-        prevChildPos = animator.transform.position;
-        // Apply the child’s root motion to the parent
-        transform.position += motionDelta;
-        animator.transform.position = prevChildPos;
 
-        if (animator.GetInteger("ComboIndex") >= 1)
+        FollowRootMotion();
+
+        if (comboIndex >= 1)
         {
             comboTimer -= Time.deltaTime;
 
             if (comboTimer <= 0.0f)
             {
-                animator.SetInteger("ComboIndex", 0);
-                comboTimer = comboResetTime;
+                    comboIndex = 0;
+                    comboTimer = comboResetTime;
             }
         }
+    }
+    
+    void FixedUpdate()
+    {
+        Moving();
     }
 
     public IEnumerator SlashComboAnimation()
     {
-        if (animator.GetBool("IsDoingAnimation")) yield break;
-        
-        //Enabling the animation
-        animator.applyRootMotion = true;
-        animator.SetBool("IsDoingAnimation",true);
-        animator.SetBool("IsMoving", false);
-        animator.SetBool("IsSlashing", true);
+        //Checking condition for slash attack
+        if (animator.GetBool("Slash3")) yield break;
+        if (!animator.GetBool("Slash1") && animator.GetBool("Slash2")) yield break;
         
         //Setting Rotation
-        characterRotation = CameraForwardRotation.eulerAngles;
-        Quaternion attackRot = idleRot;
-        while (rigidbody.rotation != attackRot)
+        if (!animator.GetBool("IsSlashing"))
         {
-            rigidbody.rotation = Quaternion.RotateTowards(rigidbody.rotation, attackRot, rotationSpeed * Time.deltaTime);
-            yield return null;
-        }
-
-        const float slashActionTime = 0.5f;
-        bool triggeredSlash = false;
-        AnimatorStateInfo stateInfo;
-        //Wait until the animation is over
-        while (true)
-        {
-            comboTimer = comboResetTime;
-            
-            stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-        
-            if (IsSlashState() && stateInfo.normalizedTime >= slashActionTime && !triggeredSlash)
+            animator.SetBool("IsSlashing", true);
+            characterRotation = CameraForwardRotation.eulerAngles;
+            Quaternion attackRot = idleRot;
+            while (rigidbody.rotation != attackRot)
             {
-                triggeredSlash = true;
-                attackAnimationSlash.Invoke();
+                rigidbody.rotation = Quaternion.RotateTowards(rigidbody.rotation, attackRot, rotationSpeed * Time.deltaTime);
+                yield return null;
             }
-
-            if (stateInfo.normalizedTime >= 1.0f)  // Check if the animation is complete
-                break;
-            
-            yield return null;
+            rigidbody.rotation = attackRot;
         }
-        
-        //Disabling the animation
-        animator.applyRootMotion = false;
-        animator.SetBool("IsDoingAnimation",false);
-        animator.SetBool("IsSlashing", false);
-        
-        animator.SetInteger("ComboIndex", animator.GetInteger("ComboIndex") + 1);
-        
-        if (animator.GetInteger("ComboIndex") >= 3)
-            animator.SetInteger("ComboIndex", 0);
         
         comboTimer = comboResetTime;
+        
+        animator.SetBool($"Slash{++comboIndex}", true);
 
-        bool IsSlashState()
-        {
-            AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-            if (stateInfo.IsName("Slash") || stateInfo.IsName("Slash 2") || stateInfo.IsName("Slash 3"))
-                return true;
-            return false;
-        }
+        attackAnimationSlash.Invoke();
     }
 
-    void FixedUpdate()
+    private void Moving()
     {
         if (DisabledMovement) return;
-        if (animator.GetBool("IsDoingAnimation")) return;
+        if (animator.GetBool("IsSlashing")) return;
+        if (animator.GetBool("IsCastingSkill")) return;
         
         Vector3 movement = Vector3.zero;
         Quaternion toRot = idleRot;
@@ -227,6 +194,18 @@ public class MovementController : MonoBehaviour
         {
             return !Input.GetKey(keybinds["Forward"]) && !Input.GetKey(keybinds["Backward"]) && Input.GetKey(keybinds[s]);
         }
+    }
+
+    private void FollowRootMotion()
+    {
+        // Get the child’s root motion delta
+        Vector3 motionDelta = animator.transform.position - transform.position;
+        motionDelta.y = 0;
+        prevChildPos = animator.transform.position;
+        prevChildPos.y = transform.position.y;
+        // Apply the child’s root motion to the parent
+        transform.position += motionDelta;
+        animator.transform.position = prevChildPos;
     }
 
     public void MultiplySpeedMultiplier(float multiplier)
