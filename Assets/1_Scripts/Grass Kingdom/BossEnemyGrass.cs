@@ -13,6 +13,9 @@ public class BossEnemyGrass : BossEnemy<BossEnemyStageGrass>
     public AudioSource fireBreathingSoundEffect;
     public GameObject spawnEffectPrefab;
 
+    public Vector3 fireBreathHalfExtents;
+    public int fireBreathDamage;
+
     protected override void OnBossActivated()  {
         Debug.Log("Grass!!");
         minionSpawnTimer = CurrentStage.minionSpawnDist.Sample();
@@ -39,6 +42,18 @@ public class BossEnemyGrass : BossEnemy<BossEnemyStageGrass>
     void BreathFire() {
         fireBreathingParticleSystem.Play();
         fireBreathingSoundEffect.Play();
+
+        foreach (var hitInfo in Physics.BoxCastAll(
+            fireBreathingParticleSystem.transform.position + transform.forward * fireBreathHalfExtents.z / 2f, 
+            fireBreathHalfExtents, 
+            transform.forward
+        ))
+        {
+            if (hitInfo.collider.gameObject.TryGetComponent(out IDamageHandler damageHandler))
+            {
+                damageHandler.OnDamage(gameObject, fireBreathDamage);
+            }
+        }
     }
 
     void SpawnMinion() {
@@ -54,5 +69,8 @@ public class BossEnemyGrass : BossEnemy<BossEnemyStageGrass>
     {
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(spawnCenter.transform.position, spawnRadius);
+
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireCube(fireBreathingParticleSystem.transform.position + transform.forward * fireBreathHalfExtents.z / 2f, fireBreathHalfExtents);
     }
 }
