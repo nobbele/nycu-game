@@ -14,6 +14,7 @@ public class BossSystem : MonoBehaviour
         containmentWallsContainer.SetActive(true);
 
         Debug.Log("Battle started!!");
+        MusicManager.Instance.PlayBossMusic();
         bossEnemy.ActivateBoss();
     }
 
