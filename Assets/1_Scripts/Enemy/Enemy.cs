@@ -39,7 +39,16 @@ public class Enemy : MonoBehaviour, IDamageHandler
         CapsuleCollider collider = enemy.AddComponent<CapsuleCollider>();
         collider.height = 2;
 
-        // Spawning Particle
+        // Create mesh instance
+        if (enemyData.enemyMesh != null)
+        {
+            enemyScript.meshInstance = Instantiate(enemyData.enemyMesh, enemy.transform.position, Quaternion.identity, enemy.transform);
+            if (enemyScript.meshInstance.TryGetComponent(out Animator animator)) {
+                animator.runtimeAnimatorController = enemyData.animatorController;
+            }
+        }
+
+        // Spawning Effect
         if (spawnEffectPrefab != null) {
             var spawnEffect = Instantiate(spawnEffectPrefab);
             spawnEffect.transform.position = spawnPosition + Vector3.up * 1f; 
@@ -52,11 +61,39 @@ public class Enemy : MonoBehaviour, IDamageHandler
     void Start()
     {
         Health = enemyData.health;
-        if (enemyData.enemyMesh != null)
+
+        if (meshInstance == null)
         {
-            meshInstance = Instantiate(enemyData.enemyMesh, transform.position, Quaternion.identity, transform);
-            if (meshInstance.TryGetComponent(out Animator animator)) {
-                animator.runtimeAnimatorController = enemyData.animatorController;
+            if (TryGetComponent(out Animator _))
+            {
+                meshInstance = gameObject;
+            }
+            else
+            {
+                Animator childAnimator = GetComponentInChildren<Animator>();
+                if (childAnimator != null)
+                {
+                    meshInstance = childAnimator.gameObject;
+                }
+            }
+        }
+
+        if (enemyData?.animatorController != null)
+        {
+            Animator targetAnimator = null;
+            if (meshInstance != null)
+            {
+                targetAnimator = meshInstance.GetComponent<Animator>();
+            }
+
+            if (targetAnimator == null)
+            {
+                targetAnimator = GetComponent<Animator>();
+            }
+
+            if (targetAnimator != null)
+            {
+                targetAnimator.runtimeAnimatorController = enemyData.animatorController;
             }
         }
     }
@@ -70,7 +107,7 @@ public class Enemy : MonoBehaviour, IDamageHandler
     void OnDead()
     {
         onDeath?.Invoke();
-        Destroy(gameObject, 2f);
+        gameObject.SetActive(false);
     }
 
     public void OnDamage(GameObject source, int damage)

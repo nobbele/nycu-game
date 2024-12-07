@@ -1,6 +1,10 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/1_Scripts/Grass Kingdom.meta
 guid: 133c73c760d2ca5cf8cbbfed3e9a4c84
 folderAsset: yes
+========
+guid: 2dc48376fb0fbaa4f93eb47a43ad6560
+>>>>>>>> 916a075 (feat: Water Kingom Dragon AI):Assets/ThirdPartyAssets/Environment/SineVFX/TranslucentCrystals/_SRP/TranslucentCrystals_URP_Patch.unitypackage.meta
 DefaultImporter:
   externalObjects: {}
   userData: 
