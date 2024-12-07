@@ -34,11 +34,13 @@ public class Enemy : MonoBehaviour, IDamageHandler
         collider.height = 2;
 
         // Spawning Particle
-        var spawnEffect = Instantiate(spawnEffectPrefab);
-        spawnEffect.transform.position = spawnPosition + Vector3.up * 1f; 
-        spawnEffect.transform.Translate(Vector3.up * 2f);
-        spawnEffect.GetComponent<ParticleSystem>().Play();
-        spawnEffect.GetComponent<AudioSource>().Play();
+        if (spawnEffectPrefab != null) {
+            var spawnEffect = Instantiate(spawnEffectPrefab);
+            spawnEffect.transform.position = spawnPosition + Vector3.up * 1f; 
+            spawnEffect.transform.Translate(Vector3.up * 2f);
+            spawnEffect.GetComponent<ParticleSystem>().Play();
+            spawnEffect.GetComponent<AudioSource>().Play();
+        }
     }
 
     void Start()
