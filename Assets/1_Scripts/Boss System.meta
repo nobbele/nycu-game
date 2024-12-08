@@ -1,6 +1,10 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/1_Scripts/Boss System.meta
 guid: bcb7b70fd9ce7df42af7958be9f6e818
 folderAsset: yes
+========
+guid: b82dd5a6e9c85ef4b8dd274bb322669e
+>>>>>>>> 916a075 (feat: Water Kingom Dragon AI):Assets/0_Scenes/WaterDragonTestScene.unity.meta
 DefaultImporter:
   externalObjects: {}
   userData: 

@@ -38,15 +38,17 @@ public abstract class BaseEnemyAI : MonoBehaviour
         
         agent = GetComponent<NavMeshAgent>();
         enemy = GetComponent<Enemy>();
-        
-        if (enemy != null)
+        animator = GetComponent<Animator>();
+
+        if (animator == null && enemy?.meshInstance != null)
         {
-            animator = enemy.meshInstance?.GetComponent<Animator>();
+            animator = enemy.meshInstance.GetComponent<Animator>();
         }
         
-        if (agent == null || enemy == null)
+        if (agent == null || enemy == null || animator == null)
         {
             Debug.LogError($"Missing required components on {gameObject.name}");
+            Debug.LogError($"NavMeshAgent: {agent != null}, Enemy: {enemy != null}, Animator: {animator != null}");
             enabled = false;
             yield break;
         }
@@ -86,6 +88,6 @@ public abstract class BaseEnemyAI : MonoBehaviour
     }
     
     protected virtual void UpdateBehavior() {
-        
+
     }
 }

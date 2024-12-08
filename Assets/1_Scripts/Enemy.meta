@@ -1,6 +1,10 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/1_Scripts/Enemy.meta
 guid: c095af7f425e3e4449e1fa483b9db523
 folderAsset: yes
+========
+guid: 3829f2d229e9f9b44b6d3f85cb2d6653
+>>>>>>>> 916a075 (feat: Water Kingom Dragon AI):Assets/ThirdPartyAssets/Environment/SineVFX/TranslucentCrystals/_SRP/TranslucentCrystals_HDRP_Patch.unitypackage.meta
 DefaultImporter:
   externalObjects: {}
   userData: 
