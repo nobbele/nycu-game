@@ -3,6 +3,7 @@ using UnityEngine;
 public class BaseEnemyData: MonoBehaviour
 {
     public GameObject enemyMesh;
+    public Vector3 enemyScale = Vector3.one;
     public BaseEnemyAI enemyAI;
     public RuntimeAnimatorController animatorController;
     public int health = 20;
