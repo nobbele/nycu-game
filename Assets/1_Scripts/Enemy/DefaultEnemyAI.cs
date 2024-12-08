@@ -45,12 +45,14 @@ public class DefaultEnemyAI : BaseEnemyAI
     {
         if (animator != null) animator.SetBool("IsMoving", true);
         agent.SetDestination(player.position);
+        RotateTowardsPlayer();
     }
     
     private void AttackPlayer()
     {
         if (animator != null) animator.SetBool("IsMoving", false);
         agent.SetDestination(transform.position);
+        RotateTowardsPlayer();
         
         if (CheckTimer("attack"))
         {
@@ -82,6 +84,18 @@ public class DefaultEnemyAI : BaseEnemyAI
         if (agent.remainingDistance <= agent.stoppingDistance + 1f)
         {
             if (animator != null) animator.SetBool("IsMoving", false);
+        }
+    }
+
+    private void RotateTowardsPlayer()
+    {
+        Vector3 direction = (player.position - transform.position).normalized;
+        direction.y = 0;
+        
+        if (direction != Vector3.zero)
+        {
+            Quaternion lookRotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 10f);
         }
     }
 
