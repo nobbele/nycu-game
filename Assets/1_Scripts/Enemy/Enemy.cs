@@ -48,6 +48,10 @@ public class Enemy : MonoBehaviour, IDamageHandler
             }
         }
 
+        // Scale
+        Vector3 currentScale = enemyScript.meshInstance.transform.localScale;
+        enemyScript.meshInstance.transform.localScale = Vector3.Scale(currentScale, enemyData.enemyScale);
+
         // Spawning Effect
         if (spawnEffectPrefab != null) {
             var spawnEffect = Instantiate(spawnEffectPrefab);

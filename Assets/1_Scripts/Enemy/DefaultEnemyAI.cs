@@ -3,6 +3,7 @@ using UnityEngine;
 public class DefaultEnemyAI : BaseEnemyAI
 {
     protected DefaultEnemyData defaultEnemyData => enemyData as DefaultEnemyData;
+    private AudioSource audioSource;
 
     public override void Initialize(Transform player, Transform spawnPoint, BaseEnemyData data)
     {
@@ -14,6 +15,11 @@ public class DefaultEnemyAI : BaseEnemyAI
         }
 
         base.Initialize(player, spawnPoint, data);
+
+        // Audio Source
+        audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource.playOnAwake = false;
+        audioSource.spatialBlend = 1f;
     }
 
     protected override void UpdateBehavior()
@@ -52,6 +58,7 @@ public class DefaultEnemyAI : BaseEnemyAI
             if (player.TryGetComponent(out IDamageHandler damageHandler))
             {
                 DisplayAttackEffect(player.position);
+                PlayAttackSound();
                 damageHandler.OnDamage(gameObject, enemyData.health);
             }
         }
@@ -97,6 +104,17 @@ public class DefaultEnemyAI : BaseEnemyAI
         }
 
         GameObject effect = Instantiate(defaultEnemyData.attackEffect, effectPosition, Quaternion.identity);
+        Vector3 currentScale = effect.transform.localScale;
+        effect.transform.localScale = Vector3.Scale(currentScale, defaultEnemyData.effectScale);
         Destroy(effect, defaultEnemyData.effectDuration);
+    }
+
+    private void PlayAttackSound()
+    {
+        if (audioSource != null && defaultEnemyData.attackSound != null)
+        {
+            audioSource.clip = defaultEnemyData.attackSound;
+            audioSource.Play();
+        }
     }
 }
