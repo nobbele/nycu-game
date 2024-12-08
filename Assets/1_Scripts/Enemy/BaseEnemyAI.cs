@@ -34,10 +34,16 @@ public abstract class BaseEnemyAI : MonoBehaviour
     
     private IEnumerator InitializeComponents()
     {
-        yield return null;
+        yield return new WaitForEndOfFrame();
         
         agent = GetComponent<NavMeshAgent>();
         enemy = GetComponent<Enemy>();
+
+        while (enemy == null || enemy.meshInstance == null)
+        {
+            yield return null;
+        }
+
         animator = GetComponent<Animator>();
 
         if (animator == null && enemy?.meshInstance != null)
