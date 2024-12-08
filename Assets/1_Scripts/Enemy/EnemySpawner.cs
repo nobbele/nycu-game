@@ -1,9 +1,8 @@
 using UnityEngine;
-using UnityEngine.AI;
 
 public class EnemySpawner : MonoBehaviour
 {
-    public EnemyData enemyData;
+    public BaseEnemyData enemyData;
     public Transform spawnCenter;
     public float spawnRadius = 5f;
     public float spawnInterval = 3f;

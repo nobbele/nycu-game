@@ -832,17 +832,17 @@ PrefabInstance:
     - target: {fileID: 2173558967530880351, guid: 1c8e55cf303ba7f0b8a20a0df2217d07,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.00000001483097
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2173558967530880351, guid: 1c8e55cf303ba7f0b8a20a0df2217d07,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.000000043331866
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2173558967530880351, guid: 1c8e55cf303ba7f0b8a20a0df2217d07,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.0000019216463
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2173558967530880351, guid: 1c8e55cf303ba7f0b8a20a0df2217d07,
         type: 3}
@@ -936,6 +936,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4400551329584591881, guid: 1c8e55cf303ba7f0b8a20a0df2217d07,
         type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4400551329584591881, guid: 1c8e55cf303ba7f0b8a20a0df2217d07,
+        type: 3}
       propertyPath: m_LocalPosition.y
       value: 2.621
       objectReference: {fileID: 0}
@@ -1007,17 +1012,17 @@ PrefabInstance:
     - target: {fileID: 8915630950740374430, guid: 1c8e55cf303ba7f0b8a20a0df2217d07,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.00000001483097
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8915630950740374430, guid: 1c8e55cf303ba7f0b8a20a0df2217d07,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.000000043331866
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8915630950740374430, guid: 1c8e55cf303ba7f0b8a20a0df2217d07,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.0000019216463
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8915630950740374430, guid: 1c8e55cf303ba7f0b8a20a0df2217d07,
         type: 3}
@@ -1846,6 +1851,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: HUD
+      objectReference: {fileID: 0}
+    - target: {fileID: 3840951544010240824, guid: cd394f2db633dc4ae9660ada498fca7a,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3840951544010240824, guid: cd394f2db633dc4ae9660ada498fca7a,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3969928073449460062, guid: cd394f2db633dc4ae9660ada498fca7a,
         type: 3}
