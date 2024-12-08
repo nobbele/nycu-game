@@ -448,21 +448,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 234915454}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f81bee8aab314ff418d3ccd12a28a671, type: 3}
+  m_Script: {fileID: 11500000, guid: e4e817c8539c45f45b8c40fe903d33bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   enemyMesh: {fileID: 919132149155446097, guid: f3cbb9c2b4248aa4aac44577525b443c,
     type: 3}
+  enemyAI: {fileID: 0}
   animatorController: {fileID: 0}
-  attackEffect: {fileID: 0}
-  effectDuration: 2
   health: 20
-  damageAmount: 10
   attackRange: 3
   chaseRange: 10
-  attackInterval: 1.5
   wanderRadius: 2.5
+  attackInterval: 1.5
   moveInterval: 3
+  attackEffect: {fileID: 0}
+  effectDuration: 2
+  damageAmount: 10
 --- !u!4 &234915456
 Transform:
   m_ObjectHideFlags: 0

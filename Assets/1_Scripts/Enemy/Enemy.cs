@@ -4,13 +4,13 @@ using UnityEngine.AI;
 
 public class Enemy : MonoBehaviour, IDamageHandler
 {
-    public EnemyData enemyData;
+    public BaseEnemyData enemyData;
     public int Health;
     public bool IsDead => Health <= 0;
     public event Action onDeath;
     public GameObject meshInstance;
 
-    public static void SpawnAt(Vector3 spawnPosition, EnemyData enemyData, Transform spawnerCenter, Action OnEnemyDeath, GameObject spawnEffectPrefab = null) {
+    public static void SpawnAt(Vector3 spawnPosition, BaseEnemyData enemyData, Transform spawnerCenter, Action OnEnemyDeath, GameObject spawnEffectPrefab = null) {
         GameObject enemy = new GameObject("Enemy");
         enemy.transform.position = spawnPosition;        
 
@@ -20,10 +20,16 @@ public class Enemy : MonoBehaviour, IDamageHandler
         enemyScript.onDeath += OnEnemyDeath;
 
         // Enemy AI
-        EnemyAI enemyAI = enemy.AddComponent<EnemyAI>();
-        enemyAI.enemyData = enemyData;
-        enemyAI.player = GameObject.FindWithTag("Player").transform;
-        enemyAI.spawnPoint = spawnerCenter;
+        BaseEnemyAI enemyAI;
+        if (enemyData.enemyAI == null)
+        {
+            enemyAI = enemy.AddComponent<DefaultEnemyAI>();
+        }
+        else
+        {
+            enemyAI = enemy.AddComponent(enemyData.enemyAI.GetType()) as BaseEnemyAI;
+        }
+        enemyAI.Initialize(GameObject.FindWithTag("Player").transform, spawnerCenter, enemyData);
 
         // Nav Mesh Agent
         NavMeshAgent navMeshAgent = enemy.AddComponent<NavMeshAgent>();

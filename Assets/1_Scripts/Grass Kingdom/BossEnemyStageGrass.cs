@@ -4,7 +4,7 @@ public class BossEnemyStageGrass : BossEnemyStage {
     public NormalDistribution minionSpawnDist;
     public NormalDistribution fireBreathDist;
 
-    public List<EnemyData> enemyData;
+    public List<DefaultEnemyData> enemyData;
 
     public override void OnStageEnter() {
 
