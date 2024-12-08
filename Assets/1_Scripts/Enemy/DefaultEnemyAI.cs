@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class DefaultEnemyAI : BaseEnemyAI
 {
@@ -57,9 +58,7 @@ public class DefaultEnemyAI : BaseEnemyAI
             
             if (player.TryGetComponent(out IDamageHandler damageHandler))
             {
-                DisplayAttackEffect(player.position);
-                PlayAttackSound();
-                damageHandler.OnDamage(gameObject, enemyData.health);
+                StartCoroutine(ExecuteAttackEffects(damageHandler));
             }
         }
     }
@@ -84,6 +83,15 @@ public class DefaultEnemyAI : BaseEnemyAI
         {
             if (animator != null) animator.SetBool("IsMoving", false);
         }
+    }
+
+    private IEnumerator ExecuteAttackEffects(IDamageHandler damageHandler)
+    {
+        yield return new WaitForSeconds(defaultEnemyData.effectDelay);
+        
+        DisplayAttackEffect(player.position);
+        PlayAttackSound();
+        damageHandler.OnDamage(gameObject, defaultEnemyData.damageAmount);
     }
 
     private void DisplayAttackEffect(Vector3 position)
