@@ -16,6 +16,8 @@ public class BossEnemyGrass : BossEnemy<BossEnemyStageGrass>
     public Vector3 fireBreathHalfExtents;
     public int fireBreathDamage;
 
+    public override string BossName => "Qaivnaenoss, Queen of the Forest";
+
     protected override void OnBossActivated()  {
         Debug.Log("Grass!!");
         minionSpawnTimer = CurrentStage.minionSpawnDist.Sample();

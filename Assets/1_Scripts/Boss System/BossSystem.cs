@@ -4,10 +4,16 @@ public class BossSystem : MonoBehaviour
 {    
     public GameObject containmentWallsContainer;
     public BossEnemyBase bossEnemy;
+    public BossUI ui;
 
     Player player = null;
 
     // public UnityEvent OnBossStart;
+
+    void Start()
+    {
+        ui.gameObject.SetActive(false);
+    }
 
     void OnBattleStart() {
         // OnBossStart.Invoke();
@@ -15,7 +21,14 @@ public class BossSystem : MonoBehaviour
 
         Debug.Log("Battle started!!");
         MusicManager.Instance.PlayBossMusic();
+        ui.gameObject.SetActive(true);
+        ui.BossName = bossEnemy.BossName;
         bossEnemy.ActivateBoss();
+    }
+
+    void Update()
+    {
+        ui.HealthPercent = bossEnemy.Health / (float)bossEnemy.MaxHealth;
     }
 
 

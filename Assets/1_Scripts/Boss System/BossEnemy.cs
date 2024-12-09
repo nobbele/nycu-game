@@ -17,13 +17,18 @@ using UnityEngine;
 // GrassBossEnemy : BossEnemy<GrassBossEnemyStage>
 
 public abstract class BossEnemyBase : MonoBehaviour {
+    public abstract string BossName { get; }
+    public abstract int Health { get; protected set; }
+    public abstract int MaxHealth { get; protected set; }
+
     public abstract void ActivateBoss();
 }
 
-public class BossEnemy<T> : BossEnemyBase, IDamageHandler
+public abstract class BossEnemy<T> : BossEnemyBase, IDamageHandler
     where T : BossEnemyStage
 {
-    public int Health = 100;
+    public override int Health  { get; protected set; } = 100;
+    public override int MaxHealth  { get; protected set; } = 100;
 
     public List<T> Stages = new();
 
