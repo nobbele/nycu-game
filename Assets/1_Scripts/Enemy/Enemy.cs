@@ -1,4 +1,5 @@
 using System;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -9,6 +10,8 @@ public class Enemy : MonoBehaviour, IDamageHandler
     public bool IsDead => Health <= 0;
     public event Action onDeath;
     public GameObject meshInstance;
+
+    public EnemyHealthDisplay healthDisplay;
 
     public static void SpawnAt(Vector3 spawnPosition, BaseEnemyData enemyData, Transform spawnerCenter, Action OnEnemyDeath, GameObject spawnEffectPrefab = null) {
         GameObject enemy = new GameObject("Enemy");
@@ -48,9 +51,15 @@ public class Enemy : MonoBehaviour, IDamageHandler
             }
         }
 
-        // Scale
+        // Scale    
         Vector3 currentScale = enemyScript.meshInstance.transform.localScale;
         enemyScript.meshInstance.transform.localScale = Vector3.Scale(currentScale, enemyData.enemyScale);
+
+        // Health Display
+        var hdPrefab = AssetDatabase.LoadAssetAtPath<EnemyHealthDisplay>("Assets/2_Prefab/Enemy UI.prefab");
+        enemyScript.healthDisplay = Instantiate(hdPrefab, enemy.transform);
+        enemyScript.healthDisplay.transform.Translate(Vector3.up * 1f);
+        enemyScript.healthDisplay.gameObject.SetActive(false);
 
         // Spawning Effect
         if (spawnEffectPrefab != null) {
@@ -104,6 +113,13 @@ public class Enemy : MonoBehaviour, IDamageHandler
 
     void Update()
     {
+        if (Health < enemyData.health) {
+            if (!healthDisplay.gameObject.activeSelf) healthDisplay.gameObject.SetActive(true);
+            healthDisplay.HealthPercent = Health / (float)enemyData.health;
+        } else {
+            if (healthDisplay.gameObject.activeSelf) healthDisplay.gameObject.SetActive(false);
+        }
+        
         if (IsDead)
             OnDead();
     }

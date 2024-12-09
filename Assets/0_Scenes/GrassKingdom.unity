@@ -7009,7 +7009,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31682a9e430f58712b0e337edbc49f3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Health: 100
   Stages:
   - {fileID: 361566073}
   - {fileID: 884183212}
