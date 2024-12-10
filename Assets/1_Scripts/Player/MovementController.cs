@@ -20,7 +20,6 @@ public class MovementController : MonoBehaviour
     public Vector3 CameraForward => CameraForwardRotation * Vector3.forward;
     public Vector3 CameraRight => CameraForwardRotation * Vector3.right;
 
-    public UnityEvent attackAnimationSlash = new();
     private bool doSlash;
     private int comboIndex;
     private float comboResetTime = 0.4f;
@@ -121,8 +120,6 @@ public class MovementController : MonoBehaviour
         comboTimer = comboResetTime;
         
         animator.SetBool($"Slash{++comboIndex}", true);
-
-        attackAnimationSlash.Invoke();
     }
 
     private void Moving()
@@ -182,7 +179,7 @@ public class MovementController : MonoBehaviour
         {
             animator.applyRootMotion = true;
             rigidbody.rotation = idleRot;
-        }
+        } 
             
         
         animator.SetBool("IsRunningForward", Input.GetKey(keybinds["Forward"]) && animator.GetBool("IsMoving"));

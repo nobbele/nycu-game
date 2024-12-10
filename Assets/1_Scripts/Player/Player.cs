@@ -43,14 +43,21 @@ public class Player : MonoBehaviour, IDamageHandler
     [SerializeField] private CharacterMenu CharacterMenu;
     [SerializeField] private CinemachineFreeLook CinemachineFreeLook;
 
+    public static Player Instance { get; private set;}
+
     private MovementController movementController;
+
+    private SlashAnimationHandler slashAnimationHandler;
 
     void Start()
     {
-        movementController = GetComponent<MovementController>();
-        CharacterMenu.gameObject.SetActive(false);
+        Instance = this;
 
-        movementController.attackAnimationSlash.AddListener(PerformAttack);
+        movementController = GetComponent<MovementController>();
+        slashAnimationHandler = GetComponentInChildren<SlashAnimationHandler>();
+        slashAnimationHandler.OnSlashPerformed.AddListener(PerformAttack);
+
+        CharacterMenu.gameObject.SetActive(false);
 
         CharacterMenu.DamageAttributeUI.Title = "Damage";
         CharacterMenu.DamageAttributeUI.Value = Attributes.Damage;
@@ -161,7 +168,7 @@ public class Player : MonoBehaviour, IDamageHandler
         }
     }
 
-    void OnDrawGizmosSelected() 
+    void OnDrawGizmos() 
     {
         Gizmos.color = Color.red;
         Gizmos.DrawLine(attackRaycastHint.position, attackRaycastHint.position + transform.forward * attackRange);

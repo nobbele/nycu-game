@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class SlashAnimationHandler : MonoBehaviour
 {
@@ -7,6 +8,8 @@ public class SlashAnimationHandler : MonoBehaviour
     private int lastComboIdx;
     private Quaternion rootRotation;
     private bool first;
+
+    public UnityEvent OnSlashPerformed = new();
     
     void Start()
     {
@@ -15,6 +18,8 @@ public class SlashAnimationHandler : MonoBehaviour
 
     public void StartSlash()
     {
+        if (lastComboIdx > 3) return;
+
         if (first) {
             rootRotation = transform.rotation;
             first = false;
@@ -26,11 +31,20 @@ public class SlashAnimationHandler : MonoBehaviour
         lastComboIdx++;
     }
 
-    public void EndSlash()
+    public void SlashHit()
     {
-        animator.SetBool($"Slash{lastComboIdx}", false);
-        if (!animator.GetBool("Slash2") && !animator.GetBool("Slash3"))
+        OnSlashPerformed?.Invoke();
+    }
+
+    public void EndSlash(int index)
+    {
+        for (int i = index; i < 4; i++)
         {
+            if (i != 0) animator.SetBool($"Slash{i}", false);
+        }
+
+        if (!animator.GetBool("Slash2") && !animator.GetBool("Slash3"))
+        { 
             lastComboIdx = 0;
             animator.SetBool("IsSlashing", false);
             animator.applyRootMotion = false;

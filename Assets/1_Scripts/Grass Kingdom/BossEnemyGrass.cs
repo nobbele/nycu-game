@@ -1,10 +1,16 @@
 
+using System;
+using System.Collections;
 using UnityEngine;
+using UnityEngine.AI;
+using Random = UnityEngine.Random;
 
 public class BossEnemyGrass : BossEnemy<BossEnemyStageGrass>
 {
-    private float minionSpawnTimer = 0;
-    private float fireBreathTimer = 0;
+    public override string BossName => "Qaivnaenoss, Queen of the Forest";
+
+    // private float minionSpawnTimer = 0;
+    // private float fireBreathTimer = 0;
 
     public Transform spawnCenter;
     public float spawnRadius;
@@ -16,34 +22,102 @@ public class BossEnemyGrass : BossEnemy<BossEnemyStageGrass>
     public Vector3 fireBreathHalfExtents;
     public int fireBreathDamage;
 
-    public override string BossName => "Qaivnaenoss, Queen of the Forest";
+    private GrassDragonAI dragonAi;
+
+    [NonSerialized] public Animator animator;
+    [NonSerialized] public NavMeshAgent agent;
+
+    public bool animationBlock;
+
+    private Vector3 targetPosition;
+
+    void Start()
+    {
+        dragonAi = GetComponent<GrassDragonAI>();
+        animator = GetComponent<Animator>();
+        agent = GetComponent<NavMeshAgent>();
+    }
+
 
     protected override void OnBossActivated()  {
         Debug.Log("Grass!!");
-        minionSpawnTimer = CurrentStage.minionSpawnDist.Sample();
-        fireBreathTimer = CurrentStage.fireBreathDist.Sample();
+        // minionSpawnTimer = CurrentStage.minionSpawnDist.Sample();
+        // fireBreathTimer = CurrentStage.fireBreathDist.Sample();
+
+        // dragonAi.State = GrassDragonState.Wandering;
+
+        Scream();
+        dragonAi.SetState(GrassDragonState.Wandering);
+    }
+
+    public IEnumerator Co_SetTarget(Vector3 targetPosition)
+    {
+        yield return null;
+        // yield return new WaitUntil(() => !animationBlock);
+        agent.SetDestination(targetPosition);
+        this.targetPosition = targetPosition;
+    }
+
+    public void OnAnimationEnd()
+    {
+        Debug.Log("OnAnimationEnd");
+        animationBlock = false;
+    }
+
+    public void Scream()
+    {
+        animationBlock = true;
+        animator.SetTrigger("Scream");
+    }
+
+    IEnumerator Co_Die()
+    {
+        dragonAi.SetState(GrassDragonState.Dead);
+        dragonAi.enabled = false;
+        agent.enabled = false;
+        
+        animator.Play("Die");
+        // TODO particle system
+
+        yield return new WaitForSeconds(4);
+
+        Destroy(gameObject);
     }
 
     public override void Update() {
         base.Update();
+
+        var agentVelocity = agent.velocity.magnitude;
+        animator.SetBool("IsWalking", agentVelocity > 0 && agentVelocity <= 4);
+        animator.SetBool("IsRunning", agentVelocity > 4);
+
+        if (dragonAi.State != GrassDragonState.Dead && Health <= 0)
+        {
+            Health = 0;
+            StartCoroutine(Co_Die());
+        }
+
         if (!IsBossActive) return;
 
-        minionSpawnTimer -= Time.deltaTime;
-        if (minionSpawnTimer <= 0) {
-            minionSpawnTimer = CurrentStage.minionSpawnDist.Sample();
-            SpawnMinion();
-        }
+        // minionSpawnTimer -= Time.deltaTime;
+        // if (minionSpawnTimer <= 0) {
+        //     minionSpawnTimer = CurrentStage.minionSpawnDist.Sample();
+        //     SpawnMinion();
+        // }
 
-        fireBreathTimer -= Time.deltaTime;
-        if (fireBreathTimer <= 0) {
-            fireBreathTimer = CurrentStage.fireBreathDist.Sample();
-            BreathFire();
-        }
+        // fireBreathTimer -= Time.deltaTime;
+        // if (fireBreathTimer <= 0) {
+        //     fireBreathTimer = CurrentStage.fireBreathDist.Sample();
+        //     BreathFire();
+        // }
     }
 
-    void BreathFire() {
+    public void BreathFire() {
         fireBreathingParticleSystem.Play();
         fireBreathingSoundEffect.Play();
+
+        animationBlock = true;
+        animator.SetTrigger("FlameAttack");
 
         foreach (var hitInfo in Physics.BoxCastAll(
             fireBreathingParticleSystem.transform.position + transform.forward * fireBreathHalfExtents.z / 2f, 
@@ -58,7 +132,7 @@ public class BossEnemyGrass : BossEnemy<BossEnemyStageGrass>
         }
     }
 
-    void SpawnMinion() {
+    public void SpawnMinion() {
         Debug.Log("Spawn Minion");
         Vector3 spawnPosition = spawnCenter.position + (Random.insideUnitSphere * spawnRadius);
         spawnPosition.y = spawnCenter.position.y;
@@ -74,5 +148,8 @@ public class BossEnemyGrass : BossEnemy<BossEnemyStageGrass>
 
         Gizmos.color = Color.green;
         Gizmos.DrawWireCube(fireBreathingParticleSystem.transform.position + transform.forward * fireBreathHalfExtents.z / 2f, fireBreathHalfExtents);
+    
+        Gizmos.color = Color.red;
+        Gizmos.DrawSphere(targetPosition, 1f);
     }
 }

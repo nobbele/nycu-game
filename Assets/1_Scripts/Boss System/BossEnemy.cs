@@ -43,7 +43,7 @@ public abstract class BossEnemy<T> : BossEnemyBase, IDamageHandler
 
     public override void ActivateBoss() {
         IsBossActive = true;
-        CurrentStage.OnStageEnter();
+        if (CurrentStage != null) CurrentStage.OnStageEnter();
         OnBossActivated();
     }
 
