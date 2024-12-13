@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Cinemachine;
 using UnityEngine;
@@ -26,6 +27,7 @@ public class Player : MonoBehaviour, IDamageHandler
     public bool IsInvincible => invincibilityTimer > 0;
 
     public int AttributePoints;
+    public int SkillPoints;
 
     public PlayerAttributes Attributes;
 
@@ -41,37 +43,51 @@ public class Player : MonoBehaviour, IDamageHandler
     [SerializeField] private float attackRaycastRadius;
     [SerializeField] private HUD HUD;
     [SerializeField] private CharacterMenu CharacterMenu;
+    [SerializeField] private SkillPanel skillPanel;
     [SerializeField] private CinemachineFreeLook CinemachineFreeLook;
 
     public static Player Instance { get; private set;}
-
+    
+    public List<SkillSlot> skillSlots;
+    
     private MovementController movementController;
 
-    private SlashAnimationHandler slashAnimationHandler;
+    private AnimationHandler animationHandler;
 
     void Start()
     {
         Instance = this;
 
         movementController = GetComponent<MovementController>();
-        slashAnimationHandler = GetComponentInChildren<SlashAnimationHandler>();
-        slashAnimationHandler.OnSlashPerformed.AddListener(PerformAttack);
+        animationHandler = GetComponentInChildren<AnimationHandler>();
+        animationHandler.OnSlashPerformed.AddListener(PerformAttack);
 
         CharacterMenu.gameObject.SetActive(false);
 
         CharacterMenu.DamageAttributeUI.Title = "Damage";
         CharacterMenu.DamageAttributeUI.Value = Attributes.Damage;
-        CharacterMenu.DamageAttributeUI.OnValueChanged.AddListener((int newValue) => {
+        CharacterMenu.DamageAttributeUI.OnValueChanged.AddListener((int newValue) =>
+        {
             Attributes.Damage = newValue;
             AttributePoints -= 1;
         });
 
         CharacterMenu.HealthAttributeUI.Title = "Health";
         CharacterMenu.HealthAttributeUI.Value = Attributes.Health;
-        CharacterMenu.HealthAttributeUI.OnValueChanged.AddListener((int newValue) => {
+        CharacterMenu.HealthAttributeUI.OnValueChanged.AddListener((int newValue) =>
+        {
             Attributes.Health = newValue;
             AttributePoints -= 1;
         });
+        
+        skillPanel.onSkillPointsChanged.AddListener((int i) => { SkillPoints = i;});
+        skillPanel.SetSkillPoint(SkillPoints);
+        skillSlots = skillPanel.SkillSlots;
+        for (int i = 0; i < skillSlots.Count; i++)
+        {
+            if (skillSlots[i].equippedSkill != null)
+                skillSlots[i].equippedSkill.Reset();
+        }
     }
 
     void Update()
@@ -99,7 +115,7 @@ public class Player : MonoBehaviour, IDamageHandler
         CharacterMenu.HealthAttributeUI.SetEnabled(AttributePoints > 0);
         CharacterMenu.AttributePointsLeftText.text = $"Points Left: {AttributePoints}";
 
-        movementController.DisabledMovement = CharacterMenu.gameObject.activeInHierarchy;
+        movementController.DisabledMovement = CharacterMenu.gameObject.activeInHierarchy || skillPanel.gameObject.activeInHierarchy;
 
         var targetMinimapRotation = minimapCameraRotationTracker.rotation;
         var targetMinimapRotationEulerAngles = targetMinimapRotation.eulerAngles;
@@ -110,8 +126,14 @@ public class Player : MonoBehaviour, IDamageHandler
 
         if (Input.GetKeyDown(KeyCode.Escape))
             CharacterMenu.gameObject.SetActive(!CharacterMenu.gameObject.activeInHierarchy);
-
-        if (!CharacterMenu.gameObject.activeInHierarchy) {
+        
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            Cursor.lockState = CursorLockMode.None;
+            skillPanel.gameObject.SetActive(!skillPanel.gameObject.activeInHierarchy);
+        }
+        
+        if (!CharacterMenu.gameObject.activeInHierarchy && !skillPanel.gameObject.activeInHierarchy) {
             // Input Handlers
             if (Input.GetMouseButtonDown(0))
                 StartAttack();
@@ -119,6 +141,19 @@ public class Player : MonoBehaviour, IDamageHandler
             // Debug Input
             if (Input.GetKeyDown(KeyCode.U))
                 Experience += 10;
+            
+            //Cast Skill Input
+            for (int i = 0; i < skillSlots.Count; i++)
+            {
+                if (Input.GetKeyDown(KeyCode.Alpha1 + i))
+                {
+                    if (i >= 0 && i < skillSlots.Count && skillSlots[i].equippedSkill != null)
+                    {
+                        StartCoroutine(movementController.CastSkill(skillSlots[i].equippedSkill));
+                    }
+                        
+                }
+            }
 
             if (!CinemachineFreeLook.enabled) {
                 CinemachineFreeLook.enabled = true;
