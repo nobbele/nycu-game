@@ -2,8 +2,9 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class SlashAnimationHandler : MonoBehaviour
+public class AnimationHandler : MonoBehaviour
 {
+    private MovementController movementController;
     private Animator animator;
     private int lastComboIdx;
     private Quaternion rootRotation;
@@ -13,6 +14,7 @@ public class SlashAnimationHandler : MonoBehaviour
     
     void Start()
     {
+        movementController = GetComponentInParent<MovementController>();
         animator = GetComponent<Animator>();
     }
 
@@ -24,7 +26,6 @@ public class SlashAnimationHandler : MonoBehaviour
             rootRotation = transform.rotation;
             first = false;
         }
-        
         if (lastComboIdx != 0) animator.SetBool($"Slash{lastComboIdx}", false);
         animator.applyRootMotion = true;
         animator.SetBool("IsSlashing", true);
@@ -42,7 +43,7 @@ public class SlashAnimationHandler : MonoBehaviour
         {
             if (i != 0) animator.SetBool($"Slash{i}", false);
         }
-
+        
         if (!animator.GetBool("Slash2") && !animator.GetBool("Slash3"))
         { 
             lastComboIdx = 0;
@@ -50,7 +51,20 @@ public class SlashAnimationHandler : MonoBehaviour
             animator.applyRootMotion = false;
         }
 
-        transform.rotation = rootRotation;
+        transform.rotation = movementController.prevRotation;
         first = true;
+    }
+
+    public void StartCast()
+    {
+        transform.rotation = movementController.prevRotation;
+        animator.applyRootMotion = true;
+    }
+
+    public void EndCast()
+    {
+        transform.rotation = movementController.prevRotation;
+        animator.applyRootMotion = false;
+        animator.SetBool("IsCastingSkill", false);
     }
 }

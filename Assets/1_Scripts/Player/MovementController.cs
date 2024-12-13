@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 [RequireComponent(typeof(Rigidbody))]
 public class MovementController : MonoBehaviour
@@ -22,7 +23,7 @@ public class MovementController : MonoBehaviour
 
     private bool doSlash;
     private int comboIndex;
-    private float comboResetTime = 0.4f;
+    private float comboResetTime = 0.2f;
     private float comboTimer;
 
     public bool DisabledMovement;
@@ -40,9 +41,10 @@ public class MovementController : MonoBehaviour
     private Quaternion frontLeftRot => Quaternion.Euler(CameraForwardRotation.eulerAngles + faceFrontLeftRotation);
     private Quaternion frontRightRot => Quaternion.Euler(CameraForwardRotation.eulerAngles + faceFrontRightRotation);
     private Quaternion idleRot => Quaternion.Euler(characterRotation + idleRotation);
+    
+    public Quaternion prevRotation;
 
     private float SpeedMultiplier = 1;
-
     private Vector3 prevChildPos;
     
     private Dictionary<string, KeyCode> keybinds = new Dictionary<string, KeyCode>
@@ -96,10 +98,36 @@ public class MovementController : MonoBehaviour
     {
         Moving();
     }
-
+    
+    public IEnumerator CastSkill(Skill skill)
+    {
+        if (animator.GetBool("IsSlashing")) yield break;
+        if (animator.GetBool("IsCastingSkill")) yield break;
+        
+        if (skill != null)
+        {
+            if (skill.CanCast())
+            {
+                animator.SetBool("IsCastingSkill", true);
+                characterRotation = CameraForwardRotation.eulerAngles;
+                Quaternion toRot = idleRot;
+                while (rigidbody.rotation != toRot)
+                {
+                    rigidbody.rotation = Quaternion.RotateTowards(rigidbody.rotation, toRot, rotationSpeed * Time.deltaTime);
+                    yield return null;
+                }
+                rigidbody.rotation = toRot;
+                prevRotation = toRot;
+            }
+        
+            skill.Cast(gameObject);
+        }
+    }
+    
     public IEnumerator SlashComboAnimation()
     {
         //Checking condition for slash attack
+        if (animator.GetBool("IsCastingSkill")) yield break;
         if (animator.GetBool("Slash3")) yield break;
         if (!animator.GetBool("Slash1") && animator.GetBool("Slash2")) yield break;
         
@@ -115,6 +143,7 @@ public class MovementController : MonoBehaviour
                 yield return null;
             }
             rigidbody.rotation = attackRot;
+            prevRotation = attackRot;
         }
         
         comboTimer = comboResetTime;
@@ -170,8 +199,8 @@ public class MovementController : MonoBehaviour
         animator.SetBool("IsMoving", false);
         if (movement.sqrMagnitude > 0)
         {
-            animator.SetBool("IsMoving", true);
             animator.applyRootMotion = false;
+            animator.SetBool("IsMoving", true);
             rigidbody.rotation = Quaternion.RotateTowards(rigidbody.rotation, toRot, rotationSpeed * Time.deltaTime);
             characterRotation = CameraForwardRotation.eulerAngles;
         }
