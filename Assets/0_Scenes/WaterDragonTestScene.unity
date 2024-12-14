@@ -943,6 +943,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyMesh: {fileID: 759305005}
+  enemyScale: {x: 1, y: 1, z: 1}
   enemyAI: {fileID: 759305018}
   animatorController: {fileID: 9100000, guid: a140d0f884d3b384da46d5d445315b81, type: 2}
   health: 20
@@ -986,6 +987,7 @@ MonoBehaviour:
   enemyData: {fileID: 759305017}
   Health: 0
   meshInstance: {fileID: 759305005}
+  healthDisplay: {fileID: 0}
 --- !u!114 &759305022
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -998,7 +1000,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd65e8eec5d93784b82bd7c46ca38e0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fireEffectPrefab: {fileID: 1223526616464650, guid: c590b17884b119046bc6412066500b7d,
+  fireEffectPrefab: {fileID: 8829451551789304542, guid: 87e902ab4b846cf438ef5e0091e560a1,
     type: 3}
 --- !u!1001 &949318961
 PrefabInstance:

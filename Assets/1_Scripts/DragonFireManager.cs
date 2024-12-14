@@ -5,6 +5,7 @@ public class DragonFireManager : MonoBehaviour
     private Transform mouthTransform;
     private GameObject fireSpawnPoint;
     private ParticleSystem fireEffect;
+    private AudioSource fireAudio;
     public GameObject fireEffectPrefab;
 
     void Start()
@@ -29,7 +30,7 @@ public class DragonFireManager : MonoBehaviour
 
         if (fireSpawnPoint != null)
         {
-            fireSpawnPoint.transform.localPosition = new Vector3(30, 30, 0);
+            fireSpawnPoint.transform.localPosition = new Vector3(-35, -103, 0);
             fireSpawnPoint.transform.localRotation = Quaternion.Euler(new Vector3(0, 0, 130));
             fireSpawnPoint.transform.localScale = new Vector3(100f, 100f, 100f);
         }
@@ -42,6 +43,13 @@ public class DragonFireManager : MonoBehaviour
             GameObject fireInstance = Instantiate(fireEffectPrefab, fireSpawnPoint.transform);
             fireEffect = fireInstance.GetComponent<ParticleSystem>();
             fireEffect.Stop();
+
+            fireAudio = fireInstance.GetComponent<AudioSource>();
+            if (fireAudio != null)
+            {
+                fireAudio.Stop();
+                fireAudio.playOnAwake = false;
+            }
         }
     }
 
@@ -49,11 +57,17 @@ public class DragonFireManager : MonoBehaviour
     {
         if (fireEffect != null)
             fireEffect.Play();
+
+        if (fireAudio != null)
+            fireAudio.Play();
     }
 
     public void StopFire()
     {
         if (fireEffect != null)
             fireEffect.Stop();
+        
+        if (fireAudio != null)
+            fireAudio.Stop();
     }
 }

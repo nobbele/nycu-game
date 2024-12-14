@@ -126,7 +126,7 @@ public class BossAI : BaseEnemyAI
                 animator.SetTrigger("FlameAttack");
                 if (TryGetComponent(out DragonFireManager fireManager))
                 {
-                    StartCoroutine(DelayedFireStart(fireManager, 0.3f));
+                    StartCoroutine(DelayedFireStart(fireManager, 0.7f));
                 }
                 damageHandler.OnDamage(gameObject, bossData.flameDamage);
             }
@@ -148,7 +148,7 @@ public class BossAI : BaseEnemyAI
         yield return new WaitForSeconds(delay);
         fireManager.StartFire();
         
-        float remainingTime = 2f - delay - 0.7f;
+        float remainingTime = 2f - delay - 0.2f;
         yield return new WaitForSeconds(remainingTime);
         fireManager.StopFire();
     }
