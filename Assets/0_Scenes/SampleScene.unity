@@ -3312,6 +3312,18 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 548356782}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &615937301 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6243209371434606252, guid: 1c8e55cf303ba7f0b8a20a0df2217d07,
+    type: 3}
+  m_PrefabInstance: {fileID: 7820507766306229697}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 319d2fe34a804e245819465c9505ea59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &655213310
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4396,6 +4408,18 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 907151455}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &928796952 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6683234193142503381, guid: 1c8e55cf303ba7f0b8a20a0df2217d07,
+    type: 3}
+  m_PrefabInstance: {fileID: 7820507766306229697}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10d53438b25c8854e9a9545624addecc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &936781958
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10035,6 +10059,31 @@ PrefabInstance:
       propertyPath: CharacterMenu
       value: 
       objectReference: {fileID: 1148042534}
+    - target: {fileID: 1956275909624171731, guid: 1c8e55cf303ba7f0b8a20a0df2217d07,
+        type: 3}
+      propertyPath: hud
+      value: 
+      objectReference: {fileID: 1221217595}
+    - target: {fileID: 1956275909624171731, guid: 1c8e55cf303ba7f0b8a20a0df2217d07,
+        type: 3}
+      propertyPath: skillPanel
+      value: 
+      objectReference: {fileID: 7518332123720107075}
+    - target: {fileID: 1956275909624171731, guid: 1c8e55cf303ba7f0b8a20a0df2217d07,
+        type: 3}
+      propertyPath: playerStats
+      value: 
+      objectReference: {fileID: 928796952}
+    - target: {fileID: 1956275909624171731, guid: 1c8e55cf303ba7f0b8a20a0df2217d07,
+        type: 3}
+      propertyPath: characterMenu
+      value: 
+      objectReference: {fileID: 1148042534}
+    - target: {fileID: 1956275909624171731, guid: 1c8e55cf303ba7f0b8a20a0df2217d07,
+        type: 3}
+      propertyPath: cinemachineFreeLook
+      value: 
+      objectReference: {fileID: 615937301}
     - target: {fileID: 2173558967530880351, guid: 1c8e55cf303ba7f0b8a20a0df2217d07,
         type: 3}
       propertyPath: m_LocalRotation.x
@@ -10099,6 +10148,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 6683234193142503381, guid: 1c8e55cf303ba7f0b8a20a0df2217d07,
+        type: 3}
+      propertyPath: SkillPoints
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6683234193142503381, guid: 1c8e55cf303ba7f0b8a20a0df2217d07,
+        type: 3}
+      propertyPath: AttributePoints
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6683234193142503381, guid: 1c8e55cf303ba7f0b8a20a0df2217d07,
+        type: 3}
+      propertyPath: onLevelChanged.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6683234193142503381, guid: 1c8e55cf303ba7f0b8a20a0df2217d07,
+        type: 3}
+      propertyPath: onLevelChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6980514870651880787, guid: 1c8e55cf303ba7f0b8a20a0df2217d07,
         type: 3}
