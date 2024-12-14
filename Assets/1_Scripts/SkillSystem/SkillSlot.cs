@@ -18,6 +18,12 @@ public class SkillSlot : MonoBehaviour,  IDropHandler
 
         if (droppedObject != null && droppedObject.TryGetComponent(out SkillUI skillUI))
         {
+            if (!skillUI.IsSkillUnlocked())
+            {
+                Debug.Log($"Cannot equip locked skill: {skillUI.skill.skillName}");
+                return;
+            }
+
             EquipSkill(skillUI);
         }
     }
@@ -67,5 +73,15 @@ public class SkillSlot : MonoBehaviour,  IDropHandler
             Debug.Log($"{equippedSkill.skillName} and {skillSlot.equippedSkill.skillName} swapped");
         else
             Debug.Log($"{equippedSkill.skillName} and null swapped");
+    }
+    public void ClearSkill()
+    {
+        icon.sprite = null;
+        if (equippedSkillUI != null)
+        {
+            equippedSkillUI.SetEquippedSlot(null);
+        }
+        equippedSkillUI = null;
+        equippedSkill = null;
     }
 }

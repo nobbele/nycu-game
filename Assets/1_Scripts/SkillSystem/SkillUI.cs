@@ -48,6 +48,12 @@ public class SkillUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
         lvText.text = $"LV:{--lvl}";
         onSkillLevelChanged.Invoke(1);
         SetSkillLockState();
+
+        if (lvl <= 0 && equippedSlot != null)
+        {
+            equippedSlot.ClearSkill();
+            equippedSlot = null;
+        }
     }
     
     public void OnBeginDrag(PointerEventData eventData)
@@ -63,6 +69,8 @@ public class SkillUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
 
     public void OnDrag(PointerEventData eventData)
     {
+        if (!skillUnlocked) return;
+        
         if (draggableIcon != null)
         {
             draggableIcon.transform.position = eventData.position;
@@ -71,6 +79,12 @@ public class SkillUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        if (!skillUnlocked)
+        {
+            transform.SetParent(originalParent);
+            return;
+        }
+        
         if (draggableIcon != null)
         {
             // Destroy the draggable icon after the drag ends
@@ -78,6 +92,11 @@ public class SkillUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
         }
         
         transform.SetParent(originalParent); // Return to original parent if no valid drop target
+    }
+
+    public bool IsSkillUnlocked()
+    {
+        return skillUnlocked;
     }
 
     public SkillSlot GetEquippedSlot()
