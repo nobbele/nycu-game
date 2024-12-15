@@ -4,6 +4,8 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerUIController))]
 [RequireComponent(typeof(PlayerCombatSystem))]
 [RequireComponent(typeof(PlayerInputHandler))]
+[RequireComponent(typeof(Inventory))]             // Add inventory requirement
+[RequireComponent(typeof(InteractionController))] // Add interaction requirement
 public class Player : MonoBehaviour
 {
     public static Player Instance { get; private set; }
@@ -18,6 +20,10 @@ public class Player : MonoBehaviour
     private PlayerUIController uiController;
     private PlayerCombatSystem combatSystem;
     private PlayerInputHandler inputHandler;
+    private Inventory inventory;
+    private InteractionController interaction;
+    
+    public Inventory PlayerInventory => inventory;
     
     void Awake()
     {
@@ -32,6 +38,8 @@ public class Player : MonoBehaviour
         uiController = GetComponent<PlayerUIController>();
         combatSystem = GetComponent<PlayerCombatSystem>();
         inputHandler = GetComponent<PlayerInputHandler>();
+        inventory = GetComponent<Inventory>(); 
+        interaction = GetComponent<InteractionController>();
     }
     
     void Start()

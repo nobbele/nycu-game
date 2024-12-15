@@ -80,6 +80,8 @@ GameObject:
   - component: {fileID: 6439234488397710169}
   - component: {fileID: 7967290629584131562}
   - component: {fileID: 6237123100809692548}
+  - component: {fileID: 2579115886259812763}
+  - component: {fileID: 5602884206790212305}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -227,6 +229,7 @@ MonoBehaviour:
   hud: {fileID: 0}
   characterMenu: {fileID: 0}
   skillPanel: {fileID: 0}
+  inventoryUI: {fileID: 0}
   cinemachineFreeLook: {fileID: 6243209371434606252}
 --- !u!114 &6439234488397710169
 MonoBehaviour:
@@ -273,6 +276,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e3c21c31634ee647b17fe94b326b4d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2579115886259812763
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4614133071132713767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e0eddc0774b955498ab586efd3d6e65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxSlots: 20
+  OnInventoryChanged:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &5602884206790212305
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4614133071132713767}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38cba58f5917d2d4e913c3667eb058bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  checkInterval: 0.1
+  interactableLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  checkRadius: 3
+  promptText: {fileID: 0}
 --- !u!1 &7865192467068334485
 GameObject:
   m_ObjectHideFlags: 0
@@ -553,17 +590,17 @@ PrefabInstance:
     - target: {fileID: 2142408876888472104, guid: d661bdf09c0d224f2aa048346caef072,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.18909392
+      value: -10.551605
       objectReference: {fileID: 0}
     - target: {fileID: 2142408876888472104, guid: d661bdf09c0d224f2aa048346caef072,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.1814175
+      value: -1.6488682
       objectReference: {fileID: 0}
     - target: {fileID: 2142408876888472104, guid: d661bdf09c0d224f2aa048346caef072,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -7.60775
+      value: -12.443387
       objectReference: {fileID: 0}
     - target: {fileID: 2142408876888472104, guid: d661bdf09c0d224f2aa048346caef072,
         type: 3}

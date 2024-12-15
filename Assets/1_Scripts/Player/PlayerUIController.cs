@@ -7,20 +7,31 @@ public class PlayerUIController : MonoBehaviour
     [SerializeField] private HUD hud;
     [SerializeField] private CharacterMenu characterMenu;
     [SerializeField] private SkillPanel skillPanel;
+    [SerializeField] private InventoryUI inventoryUI;
+    [SerializeField] private GameObject promptPanel;
     [SerializeField] private CinemachineFreeLook cinemachineFreeLook;
     
     public SkillPanel SkillPanel => skillPanel;
+    public InventoryUI InventoryUI => inventoryUI;
+    public GameObject PromptPanel => promptPanel;
+
     public bool IsAnyMenuOpen => 
         characterMenu.gameObject.activeInHierarchy || 
-        skillPanel.gameObject.activeInHierarchy;
+        skillPanel.gameObject.activeInHierarchy ||
+        inventoryUI.gameObject.activeInHierarchy;
     
     private MovementController movementController;
     
     void Start()
     {
         movementController = GetComponent<MovementController>();
+
+        // Initialize UI states
         characterMenu.gameObject.SetActive(false);
-        
+        skillPanel.gameObject.SetActive(false);
+        inventoryUI.gameObject.SetActive(false);
+        promptPanel.SetActive(false);
+
         SetupCharacterMenu();
         SetupSkillPanel();
     }
