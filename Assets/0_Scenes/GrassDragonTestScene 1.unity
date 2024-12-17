@@ -155,6 +155,7 @@ MonoBehaviour:
   containmentWallsContainer: {fileID: 0}
   bossEnemy: {fileID: 831184314}
   ui: {fileID: 1789773972}
+  Instance: {fileID: 0}
 --- !u!4 &88288616
 Transform:
   m_ObjectHideFlags: 0
@@ -888,11 +889,6 @@ PrefabInstance:
       objectReference: {fileID: 1641105357}
     - target: {fileID: 16015782729557933, guid: e6c91d98078553ba69634055f838feaa,
         type: 3}
-      propertyPath: Stages.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 16015782729557933, guid: e6c91d98078553ba69634055f838feaa,
-        type: 3}
       propertyPath: spawnEffectPrefab
       value: 
       objectReference: {fileID: 1057169641}
@@ -955,16 +951,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 767371371621218452, guid: e6c91d98078553ba69634055f838feaa,
-        type: 3}
-      propertyPath: m_Acceleration
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 767371371621218452, guid: e6c91d98078553ba69634055f838feaa,
-        type: 3}
-      propertyPath: m_AngularSpeed
-      value: 120
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1034,6 +1020,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4567e25d25fc5bc459cca3b8a9ab55dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnSlashPerformed:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1057169641
 GameObject:
   m_ObjectHideFlags: 0

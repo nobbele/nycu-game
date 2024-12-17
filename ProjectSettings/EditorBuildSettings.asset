@@ -14,6 +14,15 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/0_Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/0_Scenes/MainHubScene.unity
+    guid: 4e22cc7b7f60429e68b3b1965dad3838
+  - enabled: 1
+    path: Assets/0_Scenes/WaterKingdomScene.unity
+    guid: f1d9ea7005ba3a4448bfba409a6ebe12
+  - enabled: 1
+    path: Assets/0_Scenes/GrassKingdom.unity
+    guid: 371e0debb993d6798afa245f49f1998a
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: da1f3f6d7ba067d468e8bc261e8f345f,
       type: 2}

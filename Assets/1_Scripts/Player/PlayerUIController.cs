@@ -16,9 +16,9 @@ public class PlayerUIController : MonoBehaviour
     public GameObject PromptPanel => promptPanel;
 
     public bool IsAnyMenuOpen => 
-        characterMenu.gameObject.activeInHierarchy || 
-        skillPanel.gameObject.activeInHierarchy ||
-        inventoryUI.gameObject.activeInHierarchy;
+        (characterMenu?.gameObject?.activeInHierarchy ?? false) || 
+        (skillPanel?.gameObject?.activeInHierarchy ?? false) ||
+        (inventoryUI?.gameObject?.activeInHierarchy ?? false);
     
     private MovementController movementController;
     
