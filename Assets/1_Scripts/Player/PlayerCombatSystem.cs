@@ -1,16 +1,13 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System.Collections;
+using System.Linq;
 
 public class PlayerCombatSystem : MonoBehaviour
 {
-    [SerializeField] private Transform attackRaycastHint;
-    [SerializeField] private float attackRange = 2f;
-    [SerializeField] private float attackRaycastRadius = 0.5f;
-    
     private PlayerStats playerStats;
     private MovementController movementController;
     private AnimationHandler animationHandler;
+    private Sword sword;
     
     public List<SkillSlot> SkillSlots { get; private set; }
     
@@ -19,10 +16,11 @@ public class PlayerCombatSystem : MonoBehaviour
         playerStats = GetComponent<PlayerStats>();
         movementController = GetComponent<MovementController>();
         animationHandler = GetComponentInChildren<AnimationHandler>();
+        sword = GetComponentInChildren<Sword>();
         
         animationHandler.OnSlashPerformed.AddListener(PerformAttack);
     }
-    
+
     public void StartAttack()
     {
         StartCoroutine(movementController.SlashComboAnimation());
@@ -38,24 +36,18 @@ public class PlayerCombatSystem : MonoBehaviour
     
     private void PerformAttack()
     {
-        if (Physics.SphereCast(
-            origin: attackRaycastHint.position,
-            direction: transform.forward,
-            radius: attackRaycastRadius,
-            hitInfo: out RaycastHit hit,
-            maxDistance: attackRange
-        ))
+        var attributes = playerStats.GetAttributes();
+        var damage = 10 + 2 * attributes.Damage;
+        
+        foreach (var damageHandler in sword.OverlappingColliders
+                     .Select(collider1 => collider1.GetComponent<IDamageHandler>())
+                     .Where(damageHandler => damageHandler != null))
         {
-            if (hit.collider.gameObject.TryGetComponent(out IDamageHandler damageHandler))
-            {
-                var attributes = playerStats.GetAttributes();
-                var damage = 10 + 2 * attributes.Damage;
-                damageHandler.OnDamage(this.gameObject, damage);
 
-                if (damageHandler.IsDead)
-                {
-                    playerStats.AddExperience(10);
-                }
+            damageHandler.OnDamage(this.gameObject, damage);
+            if (damageHandler.IsDead)
+            {
+                playerStats.AddExperience(10);
             }
         }
     }
@@ -63,27 +55,9 @@ public class PlayerCombatSystem : MonoBehaviour
     public void SetSkillSlots(List<SkillSlot> skillSlots)
     {
         SkillSlots = skillSlots;
-        foreach (var slot in SkillSlots)
+        foreach (var slot in SkillSlots.Where(slot => slot.equippedSkill != null))
         {
-            if (slot.equippedSkill != null)
-            {
-                slot.equippedSkill.Reset();
-            }
+            slot.equippedSkill.Reset();
         }
-    }
-    
-    void OnDrawGizmos()
-    {
-        if (!attackRaycastHint) return;
-        
-        Gizmos.color = Color.red;
-        Gizmos.DrawLine(
-            attackRaycastHint.position, 
-            attackRaycastHint.position + transform.forward * attackRange
-        );
-        Gizmos.DrawWireSphere(
-            attackRaycastHint.position + transform.forward * attackRange, 
-            attackRaycastRadius
-        );
     }
 }
