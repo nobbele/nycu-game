@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class SkillUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
+    // UI Components
     [SerializeField] private TextMeshProUGUI nameText;
     [SerializeField] private TextMeshProUGUI lvText;
     [SerializeField] private Image icon;
@@ -19,11 +20,20 @@ public class SkillUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
     private SkillSlot equippedSlot;
     private Image draggableIcon;
     private Transform originalParent;
+    private Canvas targetCanvas;
     private int lvl = 0;
     private bool skillUnlocked = false;
     
     private void Awake()
     {
+        // Find the parent canvas for drag operations
+        targetCanvas = GetComponentInParent<Canvas>();
+        if (targetCanvas == null)
+        {
+            Debug.LogError("SkillUI: Cannot find parent Canvas!");
+        }
+
+        // Initialize UI state and bind button events
         SetSkillLockState();
         increment.onClick.AddListener(AddLvl);
         decrement.onClick.AddListener(ReduceLvl);
@@ -58,13 +68,20 @@ public class SkillUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
     
     public void OnBeginDrag(PointerEventData eventData)
     {
+        if (targetCanvas == null) return;
+        
         originalParent = transform.parent;
         if (!skillUnlocked) return;
         
-        draggableIcon = Instantiate(icon, transform.root);
+        // Create draggable icon instance
+        draggableIcon = Instantiate(icon, targetCanvas.transform);
         draggableIcon.raycastTarget = false;
         draggableIcon.transform.position = icon.rectTransform.position;
-        draggableIcon.canvas.sortingOrder = 10;
+        
+        // Ensure dragged icon appears above other UI elements
+        Canvas draggableCanvas = draggableIcon.gameObject.AddComponent<Canvas>();
+        draggableCanvas.overrideSorting = true;
+        draggableCanvas.sortingOrder = 10;
     }
 
     public void OnDrag(PointerEventData eventData)
