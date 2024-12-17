@@ -10,7 +10,6 @@ public class PlayerUIController : MonoBehaviour
     [SerializeField] private InventoryUI inventoryUI;
     [SerializeField] private GameObject promptPanel;
     [SerializeField] private CinemachineFreeLook cinemachineFreeLook;
-    
     public SkillPanel SkillPanel => skillPanel;
     public InventoryUI InventoryUI => inventoryUI;
     public GameObject PromptPanel => promptPanel;
@@ -46,9 +45,8 @@ public class PlayerUIController : MonoBehaviour
     
     private void UpdateHUD()
     {
-        hud.XpSlider.value = (float)playerStats.Experience / playerStats.XpRequired;
-        hud.HealthSlider.value = (float)playerStats.Health / playerStats.MaxHealth;
-        hud.LevelLabel.text = $"Level: {playerStats.Level + 1}";
+        hud.UpdateHealth(playerStats.Health, playerStats.MaxHealth);
+        hud.UpdateExperience(playerStats.Experience, playerStats.XpRequired, playerStats.Level);
     }
     
     private void UpdateCharacterMenu()
