@@ -481,7 +481,7 @@ PrefabInstance:
     - target: {fileID: 2173558967530880351, guid: 1c8e55cf303ba7f0b8a20a0df2217d07,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.037511844
+      value: 0.037511867
       objectReference: {fileID: 0}
     - target: {fileID: 2173558967530880351, guid: 1c8e55cf303ba7f0b8a20a0df2217d07,
         type: 3}
@@ -491,7 +491,7 @@ PrefabInstance:
     - target: {fileID: 2173558967530880351, guid: 1c8e55cf303ba7f0b8a20a0df2217d07,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.05230394
+      value: 0.052303962
       objectReference: {fileID: 0}
     - target: {fileID: 2353438788472430129, guid: 1c8e55cf303ba7f0b8a20a0df2217d07,
         type: 3}
@@ -623,6 +623,16 @@ PrefabInstance:
       propertyPath: rotationTracker
       value: 
       objectReference: {fileID: 153406279}
+    - target: {fileID: 6683234193142503381, guid: 1c8e55cf303ba7f0b8a20a0df2217d07,
+        type: 3}
+      propertyPath: SkillPoints
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6683234193142503381, guid: 1c8e55cf303ba7f0b8a20a0df2217d07,
+        type: 3}
+      propertyPath: AttributePoints
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 6980514870651880787, guid: 1c8e55cf303ba7f0b8a20a0df2217d07,
         type: 3}
       propertyPath: m_LocalPosition.x

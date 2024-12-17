@@ -6,8 +6,8 @@ using System;
 
 public class ItemSlotUI : MonoBehaviour, IPointerClickHandler
 {
-    [SerializeField] private Image iconImage;
-    [SerializeField] private TextMeshProUGUI nameText;
+    [SerializeField] public Image iconImage;
+    [SerializeField] public TextMeshProUGUI nameText;
 
     private Item currentItem;
     private Action<Item> onItemClicked;

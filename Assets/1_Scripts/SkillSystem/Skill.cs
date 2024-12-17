@@ -6,8 +6,9 @@ public abstract class Skill : ScriptableObject
     public string skillName;
     public string description;
     public Sprite icon;
-    public float cooldown; // Time before the skill can be used again
-    private float lastUsedTime;
+    public float cooldown;
+    private float lastUsedTime = -999f;
+    public float LastUsedTime => lastUsedTime;
     
     public bool CanCast()
     {
@@ -21,15 +22,11 @@ public abstract class Skill : ScriptableObject
             Execute(caster);
             lastUsedTime = Time.time;
         }
-        else
-        {
-            Debug.Log($"Skill {skillName} is on cooldown! {Time.time}, {lastUsedTime}");
-        }
     }
 
     public void Reset()
     {
-        lastUsedTime = 0f;
+        lastUsedTime = -999f;
     }
 
     protected abstract void Execute(GameObject caster);

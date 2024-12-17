@@ -1,16 +1,25 @@
-using System;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 [System.Serializable]
-public class SkillSlotChangedEvent : UnityEvent<int, Skill> {}
-public class SkillSlot : MonoBehaviour,  IDropHandler
+public class SkillChangeEvent : UnityEvent<Skill> {}
+
+public class SkillSlot : MonoBehaviour, IDropHandler
 {
     public Image icon;
     public SkillUI equippedSkillUI;
     public Skill equippedSkill;
+    
+    [SerializeField] private SkillChangeEvent _onSkillChanged = new();
+    public SkillChangeEvent onSkillChanged => _onSkillChanged;
+    
+    void Awake()
+    {
+        if (_onSkillChanged == null)
+            _onSkillChanged = new();
+    }
     
     public void OnDrop(PointerEventData eventData)
     {
@@ -20,7 +29,6 @@ public class SkillSlot : MonoBehaviour,  IDropHandler
         {
             if (!skillUI.IsSkillUnlocked())
             {
-                Debug.Log($"Cannot equip locked skill: {skillUI.skill.skillName}");
                 return;
             }
 
@@ -47,7 +55,7 @@ public class SkillSlot : MonoBehaviour,  IDropHandler
             skillUI.SetEquippedSlot(this);
             equippedSkill.Reset();
             
-            Debug.Log($"{equippedSkill.skillName} equipped");
+            _onSkillChanged.Invoke(equippedSkill);
         }
     }
 
@@ -62,18 +70,19 @@ public class SkillSlot : MonoBehaviour,  IDropHandler
         equippedSkill = skillSlot.equippedSkill;
         equippedSkillUI.SetEquippedSlot(this);
         equippedSkill.Reset();
+        _onSkillChanged.Invoke(equippedSkill);
         
         skillSlot.icon.sprite = tempIcon;
         skillSlot.equippedSkillUI = tempUI;
         skillSlot.equippedSkill = tempSkill;
         if (skillSlot.equippedSkillUI != null) skillSlot.equippedSkillUI.SetEquippedSlot(skillSlot);
-        if (skillSlot.equippedSkill != null) skillSlot.equippedSkill.Reset();
-        
-        if (skillSlot.equippedSkill != null)
-            Debug.Log($"{equippedSkill.skillName} and {skillSlot.equippedSkill.skillName} swapped");
-        else
-            Debug.Log($"{equippedSkill.skillName} and null swapped");
+        if (skillSlot.equippedSkill != null) 
+        {
+            skillSlot.equippedSkill.Reset();
+            skillSlot._onSkillChanged.Invoke(skillSlot.equippedSkill);
+        }
     }
+
     public void ClearSkill()
     {
         icon.sprite = null;
@@ -83,5 +92,6 @@ public class SkillSlot : MonoBehaviour,  IDropHandler
         }
         equippedSkillUI = null;
         equippedSkill = null;
+        _onSkillChanged.Invoke(null);
     }
 }
