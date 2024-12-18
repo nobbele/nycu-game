@@ -10327,6 +10327,7 @@ GameObject:
   m_Component:
   - component: {fileID: 246759503001805253}
   - component: {fileID: 5288425447842123186}
+  - component: {fileID: 4615154335907350397}
   m_Layer: 6
   m_Name: Maria_sword
   m_TagString: Untagged
@@ -10467,6 +10468,18 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.9563867, y: 0.4161765, z: 0.33970225}
     m_Extent: {x: 0.37377962, y: 0.10996109, z: 0.634907}
   m_DirtyAABB: 0
+--- !u!114 &4615154335907350397
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3490884717065523250}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be1477a72e96ed927b71c4eb761e6569, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3530000663899107465
 GameObject:
   m_ObjectHideFlags: 0
@@ -14347,7 +14360,6 @@ GameObject:
   - component: {fileID: 5134107466063510223}
   - component: {fileID: 3028433431163750543}
   - component: {fileID: 5617640202056267379}
-  - component: {fileID: 2076530832839264367}
   m_Layer: 6
   m_Name: Maria WProp J J Ong
   m_TagString: Untagged
@@ -14406,22 +14418,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4567e25d25fc5bc459cca3b8a9ab55dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OnSlashPerformed:
+  OnSlashStart:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &2076530832839264367
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5030747439928966218}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4567e25d25fc5bc459cca3b8a9ab55dc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  OnSlashPerformed:
+  OnSlashEnd:
     m_PersistentCalls:
       m_Calls: []
 --- !u!1 &5050320791400485564
@@ -26400,9 +26400,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d579b8ed7cda8649b53be490dd764f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attackRaycastHint: {fileID: 2544690562186858292}
-  attackRange: 2
-  attackRaycastRadius: 0.5
 --- !u!114 &4357415013880012084
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -42,7 +42,7 @@ public class PlayerCombatSystem : MonoBehaviour
 
     public void StartAttack()
     {
-        StartCoroutine(movementController.SlashComboAnimation());
+        movementController.SlashComboAnimation();
     }
     
     public void CastSkill(int skillIndex)

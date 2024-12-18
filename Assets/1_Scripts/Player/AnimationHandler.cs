@@ -6,10 +6,6 @@ public class AnimationHandler : MonoBehaviour
 {
     private MovementController movementController;
     private Animator animator;
-    private int lastComboIdx;
-    private Quaternion rootRotation;
-    private bool first;
-
     public UnityEvent OnSlashStart = new();
     public UnityEvent OnSlashEnd = new();
     
@@ -21,16 +17,10 @@ public class AnimationHandler : MonoBehaviour
 
     public void StartSlash()
     {
-        if (lastComboIdx > 3) return;
-
-        if (first) {
-            rootRotation = transform.rotation;
-            first = false;
-        }
-        if (lastComboIdx != 0) animator.SetBool($"Slash{lastComboIdx}", false);
+        movementController.ResetComboTimer();
+        StartCoroutine(movementController.RotateFacing());
         animator.applyRootMotion = true;
         animator.SetBool("IsSlashing", true);
-        lastComboIdx++;
     }
 
     public void SlashHitStart()
@@ -45,20 +35,11 @@ public class AnimationHandler : MonoBehaviour
 
     public void EndSlash(int index)
     {
-        for (int i = index; i < 4; i++)
-        {
-            if (i != 0) animator.SetBool($"Slash{i}", false);
-        }
+        animator.SetBool("IsSlashing", false);
+        animator.SetBool($"Slash{index}", false);
+        animator.applyRootMotion = false;
         
-        if (!animator.GetBool("Slash2") && !animator.GetBool("Slash3"))
-        { 
-            lastComboIdx = 0;
-            animator.SetBool("IsSlashing", false);
-            animator.applyRootMotion = false;
-        }
-
         transform.rotation = movementController.prevRotation;
-        first = true;
     }
 
     public void StartCast()
