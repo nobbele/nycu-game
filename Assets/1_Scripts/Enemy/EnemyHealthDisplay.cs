@@ -1,17 +1,26 @@
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class EnemyHealthDisplay : MonoBehaviour
 {
-    [SerializeField] private Slider healthBarSlider;
-    [SerializeField] private TMP_Text healthPercent;
+    [SerializeField] private BarScaler healthBarScaler;
+    private float currentHealth;
 
     public float HealthPercent {
-        get => healthBarSlider.value;
+        get => currentHealth;
         set {
-            healthBarSlider.value = value;
-            healthPercent.text = $"{Mathf.RoundToInt(value * 100)}%";
+            currentHealth = value;
+            if (healthBarScaler != null)
+            {
+                healthBarScaler.SetValue(value * 100f);
+            }
+        }
+    }
+
+    private void Start()
+    {
+        if (healthBarScaler == null)
+        {
+            Debug.LogWarning("Health Bar Scaler not assigned in Enemy Health Display!");
         }
     }
 }
