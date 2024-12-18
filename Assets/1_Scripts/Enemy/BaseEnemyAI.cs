@@ -1,72 +1,89 @@
 using UnityEngine;
 using UnityEngine.AI;
 using System.Collections.Generic;
-using System.Collections;
 
-public abstract class BaseEnemyAI : MonoBehaviour
+public interface IEnemyAI 
+{
+    void Initialize(Transform player, Transform spawnPoint, BaseEnemyData data);
+}
+
+public abstract class BaseEnemyAI<T> : MonoBehaviour, IEnemyAI where T : BaseEnemyData
 {
     protected Transform player;
     protected Transform spawnPoint;
-    protected BaseEnemyData enemyData;
+    protected T enemyData;
     
     protected NavMeshAgent agent;
     protected Animator animator;
-    protected Enemy enemy;
     
     protected Dictionary<string, Timer> timers = new();
-    protected bool isInitialized = false;
+    protected bool isInitialized;
     
     public virtual void Initialize(Transform player, Transform spawnPoint, BaseEnemyData data)
     {
-        if (player == null || spawnPoint == null || data == null)
-        {
-            Debug.LogError($"Failed to initialize {GetType().Name}: Missing required parameters");
-            enabled = false;
-            return;
-        }
+        if (!ValidateInitializationParameters(player, spawnPoint, data)) return;
 
         this.player = player;
         this.spawnPoint = spawnPoint;
-        this.enemyData = data;
-        
-        StartCoroutine(InitializeComponents());
-    }
-    
-    private IEnumerator InitializeComponents()
-    {
-        yield return new WaitForEndOfFrame();
-        
-        agent = GetComponent<NavMeshAgent>();
-        enemy = GetComponent<Enemy>();
+        this.enemyData = data as T;
 
-        while (enemy == null || enemy.meshInstance == null)
+        if (TryGetComponent<NavMeshAgent>(out agent))
         {
-            yield return null;
+            // Try to get Enemy component and animator
+            var baseEnemy = GetComponent<Enemy>();
+            if (baseEnemy != null)
+            {
+                animator = baseEnemy.GetAnimator();
+                if (animator == null)
+                {
+                    Debug.LogError($"No animator found on {gameObject.name}");
+                    enabled = false;
+                    return;
+                }
+                
+                InitializeTimers();
+                isInitialized = true;
+                return;
+            }
+
+            // If not Enemy, try Boss
+            var bossEnemy = GetComponent<Boss>();
+            if (bossEnemy != null)
+            {
+                animator = bossEnemy.GetAnimator();
+                if (animator == null)
+                {
+                    Debug.LogError($"No animator found on {gameObject.name}");
+                    enabled = false;
+                    return;
+                }
+                
+                InitializeTimers();
+                isInitialized = true;
+                return;
+            }
         }
 
-        animator = GetComponent<Animator>();
-
-        if (animator == null && enemy?.meshInstance != null)
-        {
-            animator = enemy.meshInstance.GetComponent<Animator>();
-        }
-        
-        if (agent == null || enemy == null)
-        {
-            Debug.LogError($"Missing required components on {gameObject.name}");
-            Debug.LogError($"NavMeshAgent: {agent != null}, Enemy: {enemy != null}");
-            enabled = false;
-            yield break;
-        }
+        Debug.LogError($"Missing required components on {gameObject.name}");
+        enabled = false;
 
         InitializeTimers();
         isInitialized = true;
     }
+
+    private bool ValidateInitializationParameters(Transform player, Transform spawnPoint, BaseEnemyData data)
+    {
+        if (player == null || spawnPoint == null || data == null || data is not T)
+        {
+            Debug.LogError($"Failed to initialize {GetType().Name}: Invalid parameters");
+            enabled = false;
+            return false;
+        }
+        return true;
+    }
     
     protected virtual void InitializeTimers()
     {
-        if (enemyData == null) return;
-        
         AddTimer("move", enemyData.moveInterval);
         AddTimer("attack", enemyData.attackInterval);
     }
@@ -79,21 +96,27 @@ public abstract class BaseEnemyAI : MonoBehaviour
     protected bool CheckTimer(string name)
     {
         if (!isInitialized) return false;
-        
-        if (timers.TryGetValue(name, out Timer timer))
-        {
-            return timer.Update(Time.deltaTime);
-        }
-        return false;
+        return timers.TryGetValue(name, out Timer timer) && timer.Update(Time.deltaTime);
     }
     
     protected virtual void Update()
     {
-        if (!isInitialized || enemyData == null) return;
+        if (!isInitialized || animator == null)
+        {
+            enabled = false;
+            return;
+        }
         UpdateBehavior();
     }
     
-    protected virtual void UpdateBehavior() {
-
+    protected void ValidateComponents()
+    {
+        if (animator == null || !animator)
+        {
+            Debug.LogError($"Lost animator reference on {gameObject.name}");
+            enabled = false;
+        }
     }
+    
+    protected abstract void UpdateBehavior();
 }

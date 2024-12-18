@@ -3,79 +3,41 @@ using UnityEngine.AI;
 using System.Collections;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class BossAI : BaseEnemyAI
+public class BossAI : BaseEnemyAI<BossData>
 {
-    protected BossData bossData => enemyData as BossData;
     private bool wasOutsideScreamRange = true;
-    private bool isAnimating = false;
-
-    public override void Initialize(Transform player, Transform spawnPoint, BaseEnemyData data)
-    {
-        if (data is not BossData)
-        {
-            Debug.LogError($"BossAI requires BossData, but received {data.GetType().Name}");
-            enabled = false;
-            return;
-        }
-
-        base.Initialize(player, spawnPoint, data);
-    }
+    private bool isAnimating;
 
     protected override void InitializeTimers()
     {
-        if (bossData == null) return;
-        
         base.InitializeTimers();
-        AddTimer("scream", bossData.screamInterval);
+        AddTimer("scream", enemyData.screamInterval);
     }
 
     protected override void UpdateBehavior()
     {
-        if (isAnimating) return;
+        if (isAnimating || animator == null) return;
 
         float distanceToPlayer = Vector3.Distance(player.position, transform.position);
-
-        // Look at player if in range
-        if (distanceToPlayer <= bossData.screamRange)
-        {
-            Vector3 direction = (player.position - transform.position).normalized;
-            direction.y = 0;
-            transform.rotation = Quaternion.LookRotation(direction);
-        }
-
-        if (distanceToPlayer > bossData.screamRange)
-        {
-            wasOutsideScreamRange = true;
-        }
-
+        
         if (distanceToPlayer <= enemyData.attackRange)
         {
             AttackPlayer();
         }
-        else if (distanceToPlayer <= bossData.screamRange)
+        else if (distanceToPlayer <= enemyData.screamRange)
         {
             ScreamAtPlayer();
         }
         else
         {
             WanderAroundSpawnPoint();
-        }
-    }
-
-    private void AttackPlayer()
-    {
-        animator.SetBool("IsWalking", false);
-        agent.SetDestination(transform.position);
-
-        if (CheckTimer("attack"))
-        {
-            isAnimating = true;
-            PerformWeightedAttack();
+            wasOutsideScreamRange = true;
         }
     }
 
     private void ScreamAtPlayer()
     {
+        LookAtPlayer();
         animator.SetBool("IsWalking", false);
         agent.SetDestination(transform.position);
 
@@ -84,6 +46,19 @@ public class BossAI : BaseEnemyAI
             isAnimating = true;
             animator.SetTrigger("Scream");
             wasOutsideScreamRange = false;
+        }
+    }
+
+    private void AttackPlayer()
+    {
+        LookAtPlayer();
+        animator.SetBool("IsWalking", false);
+        agent.SetDestination(transform.position);
+
+        if (CheckTimer("attack"))
+        {
+            isAnimating = true;
+            PerformWeightedAttack();
         }
     }
 
@@ -109,47 +84,53 @@ public class BossAI : BaseEnemyAI
         }
     }
 
+    private void LookAtPlayer()
+    {
+        Vector3 direction = (player.position - transform.position).normalized;
+        direction.y = 0;
+        transform.rotation = Quaternion.LookRotation(direction);
+    }
+
     private void PerformWeightedAttack()
     {
-        float totalWeight = bossData.biteAttackWeight + bossData.flameAttackWeight + bossData.clawAttackWeight;
+        float totalWeight = enemyData.biteAttackWeight + enemyData.flameAttackWeight + enemyData.clawAttackWeight;
         float randomValue = Random.Range(0f, totalWeight);
 
         if (player.TryGetComponent(out IDamageHandler damageHandler))
         {
-            if (randomValue < bossData.biteAttackWeight)
+            if (randomValue < enemyData.biteAttackWeight)
             {
                 animator.SetTrigger("BiteAttack");
-                damageHandler.OnDamage(gameObject, bossData.biteDamage);
+                damageHandler.OnDamage(gameObject, enemyData.biteDamage);
             }
-            else if (randomValue < bossData.biteAttackWeight + bossData.flameAttackWeight)
+            else if (randomValue < enemyData.biteAttackWeight + enemyData.flameAttackWeight)
             {
                 animator.SetTrigger("FlameAttack");
-                if (TryGetComponent(out DragonFireManager fireManager))
-                {
-                    StartCoroutine(DelayedFireStart(fireManager, 0.7f));
-                }
-                damageHandler.OnDamage(gameObject, bossData.flameDamage);
+                StartCoroutine(ExecuteFlameAttack(damageHandler));
             }
             else
             {
                 animator.SetTrigger("ClawAttack");
-                damageHandler.OnDamage(gameObject, bossData.clawDamage);
+                damageHandler.OnDamage(gameObject, enemyData.clawDamage);
             }
+        }
+    }
+
+    private IEnumerator ExecuteFlameAttack(IDamageHandler damageHandler)
+    {
+        if (TryGetComponent(out DragonFireManager fireManager))
+        {
+            yield return new WaitForSeconds(0.7f);
+            fireManager.StartFire();
+            damageHandler.OnDamage(gameObject, enemyData.flameDamage);
+            
+            yield return new WaitForSeconds(1.1f);
+            fireManager.StopFire();
         }
     }
 
     public void OnAnimationEnd()
     {
         isAnimating = false;
-    }
-
-    private IEnumerator DelayedFireStart(DragonFireManager fireManager, float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        fireManager.StartFire();
-        
-        float remainingTime = 2f - delay - 0.2f;
-        yield return new WaitForSeconds(remainingTime);
-        fireManager.StopFire();
     }
 }
