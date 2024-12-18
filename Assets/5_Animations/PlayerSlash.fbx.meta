@@ -79,7 +79,7 @@ ModelImporter:
         objectReferenceParameter: {fileID: 11500000, guid: 4567e25d25fc5bc459cca3b8a9ab55dc,
           type: 3}
         floatParameter: 0
-        intParameter: 1
+        intParameter: 0
         messageOptions: 0
       - time: 1
         functionName: EndSlash

@@ -21,9 +21,8 @@ public class MovementController : MonoBehaviour
     public Vector3 CameraForward => CameraForwardRotation * Vector3.forward;
     public Vector3 CameraRight => CameraForwardRotation * Vector3.right;
 
-    private bool doSlash;
-    private int comboIndex;
-    private float comboResetTime = 0.2f;
+    private int comboIndex = 0;
+    private float comboResetTime = 1f;
     private float comboTimer;
 
     public bool DisabledMovement;
@@ -124,31 +123,37 @@ public class MovementController : MonoBehaviour
         }
     }
     
-    public IEnumerator SlashComboAnimation()
+    public void SlashComboAnimation()
     {
         //Checking condition for slash attack
-        if (animator.GetBool("IsCastingSkill")) yield break;
-        if (animator.GetBool("Slash3")) yield break;
-        if (!animator.GetBool("Slash1") && animator.GetBool("Slash2")) yield break;
+        if (animator.GetBool("IsCastingSkill")) return;
+        if (animator.GetBool("Slash3")) return;
         
+        ResetComboTimer();
+        animator.SetBool("IsSlashing", true);
+
+        comboIndex++;
+        animator.SetBool($"Slash{comboIndex}", true);
+        if (comboIndex >= 3) comboIndex = 0;
+    }
+    
+    public IEnumerator RotateFacing()
+    {
         //Setting Rotation
-        if (!animator.GetBool("IsSlashing"))
+        characterRotation = CameraForwardRotation.eulerAngles; 
+        Quaternion attackRot = idleRot;
+        while (rigidbody.rotation != attackRot)
         {
-            animator.SetBool("IsSlashing", true);
-            characterRotation = CameraForwardRotation.eulerAngles;
-            Quaternion attackRot = idleRot;
-            while (rigidbody.rotation != attackRot)
-            {
-                rigidbody.rotation = Quaternion.RotateTowards(rigidbody.rotation, attackRot, rotationSpeed * Time.deltaTime);
-                yield return null;
-            }
-            rigidbody.rotation = attackRot;
-            prevRotation = attackRot;
+            rigidbody.rotation = Quaternion.RotateTowards(rigidbody.rotation, attackRot, rotationSpeed * Time.deltaTime);
+            yield return null;
         }
-        
+        rigidbody.rotation = attackRot;
+        prevRotation = attackRot;
+    }
+
+    public void ResetComboTimer()
+    {
         comboTimer = comboResetTime;
-        
-        animator.SetBool($"Slash{++comboIndex}", true);
     }
 
     private void Moving()
