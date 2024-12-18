@@ -2,46 +2,49 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class Boss : Enemy
+public class Boss : BaseEnemy<BossData>
 {
-    private void Awake()
+    private BossAI bossAI;
+
+    protected override void InitializeMeshAndAnimator()
     {
-        // Find the existing mesh in scene
-        meshInstance = transform.Find("Dragon").gameObject;
+        // Ensure mesh instance is set
         if (meshInstance == null)
         {
-            Debug.LogError("Dragon mesh not found in scene!");
-            return;
+            meshInstance = transform.Find("Dragon")?.gameObject;
+            if (meshInstance == null)
+            {
+                Debug.LogError("Dragon mesh not found in scene!");
+                enabled = false;
+                return;
+            }
         }
+
+        base.InitializeMeshAndAnimator();
     }
 
-    protected void Start()
+    protected override void InitializeComponents()
     {
-        // Set initial health
-        Health = enemyData.health;
+        base.InitializeComponents();
+        InitializeBossAI();
+    }
 
-        // Setup animator if needed
-        if (meshInstance.TryGetComponent(out Animator animator) && enemyData.animatorController != null)
+    private void InitializeBossAI()
+    {
+        if (!TryGetComponent<BossAI>(out bossAI))
         {
-            animator.runtimeAnimatorController = enemyData.animatorController;
+            bossAI = gameObject.AddComponent<BossAI>();
         }
 
-        // Initialize AI after mesh is setup
-        if (TryGetComponent(out BossAI bossAI))
+        var playerTransform = GameObject.FindWithTag("Player")?.transform;
+        if (playerTransform != null)
         {
-            bossAI.Initialize(
-                GameObject.FindWithTag("Player").transform,
-                transform,
-                enemyData
-            );
+            bossAI.Initialize(playerTransform, transform, enemyData);
         }
     }
 
     public void PlayIntroduction()
     {
-        if (meshInstance.TryGetComponent(out Animator animator))
-        {
-            animator.SetTrigger("Introduction");
-        }
+        animator?.SetTrigger("Introduction");
     }
 }

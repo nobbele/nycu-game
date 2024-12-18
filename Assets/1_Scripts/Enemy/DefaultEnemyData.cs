@@ -8,4 +8,6 @@ public class DefaultEnemyData : BaseEnemyData
     public float effectDuration = 2f;
     public float effectDelay = 0.1f;
     public int damageAmount = 10;
+
+    public override System.Type GetAIType() => typeof(DefaultEnemyAI);
 }
