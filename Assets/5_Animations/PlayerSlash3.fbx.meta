@@ -65,8 +65,8 @@ ModelImporter:
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.49868768
-        functionName: SlashHit
+      - time: 0.3097113
+        functionName: SlashHitStart
         data: 
         objectReferenceParameter: {fileID: 11500000, guid: 4567e25d25fc5bc459cca3b8a9ab55dc,
           type: 3}
@@ -75,6 +75,14 @@ ModelImporter:
         messageOptions: 0
       - time: 1
         functionName: EndSlash
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 4567e25d25fc5bc459cca3b8a9ab55dc,
+          type: 3}
+        floatParameter: 0
+        intParameter: 3
+        messageOptions: 0
+      - time: 1
+        functionName: SlashHitEnd
         data: 
         objectReferenceParameter: {fileID: 11500000, guid: 4567e25d25fc5bc459cca3b8a9ab55dc,
           type: 3}

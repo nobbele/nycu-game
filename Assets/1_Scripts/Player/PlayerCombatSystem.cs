@@ -9,6 +9,9 @@ public class PlayerCombatSystem : MonoBehaviour
     private AnimationHandler animationHandler;
     private Sword sword;
     
+    private List<Collider> collectedColliders = new List<Collider>();
+    private bool collectingColliders = false;
+    
     public List<SkillSlot> SkillSlots { get; private set; }
     
     void Start()
@@ -18,7 +21,23 @@ public class PlayerCombatSystem : MonoBehaviour
         animationHandler = GetComponentInChildren<AnimationHandler>();
         sword = GetComponentInChildren<Sword>();
         
-        animationHandler.OnSlashPerformed.AddListener(PerformAttack);
+        animationHandler.OnSlashStart.AddListener(StartColliderCollection);
+        animationHandler.OnSlashEnd.AddListener(EndColliderCollection);
+    }
+
+    void Update()
+    {
+        if (collectingColliders)
+        {
+            var newColliders = sword.OverlappingColliders.Except(collectedColliders).ToList();
+            collectedColliders.AddRange(newColliders);
+
+            foreach (var newCollider in newColliders)
+            {
+                if (newCollider.TryGetComponent(out IDamageHandler damageHandler))
+                    PerformAttack(damageHandler);
+            }
+        }
     }
 
     public void StartAttack()
@@ -33,22 +52,27 @@ public class PlayerCombatSystem : MonoBehaviour
             StartCoroutine(movementController.CastSkill(SkillSlots[skillIndex].equippedSkill));
         }
     }
+
+    private void StartColliderCollection()
+    {
+        collectedColliders.Clear();
+        collectingColliders = true;
+    }
+
+    private void EndColliderCollection()
+    {
+        collectingColliders = false;
+    }
     
-    private void PerformAttack()
+    private void PerformAttack(IDamageHandler damageHandler)
     {
         var attributes = playerStats.GetAttributes();
         var damage = 10 + 2 * attributes.Damage;
         
-        foreach (var damageHandler in sword.OverlappingColliders
-                     .Select(collider1 => collider1.GetComponent<IDamageHandler>())
-                     .Where(damageHandler => damageHandler != null))
+        damageHandler.OnDamage(this.gameObject, damage);
+        if (damageHandler.IsDead)
         {
-
-            damageHandler.OnDamage(this.gameObject, damage);
-            if (damageHandler.IsDead)
-            {
-                playerStats.AddExperience(10);
-            }
+            playerStats.AddExperience(10);
         }
     }
     

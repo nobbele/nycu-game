@@ -10,7 +10,8 @@ public class AnimationHandler : MonoBehaviour
     private Quaternion rootRotation;
     private bool first;
 
-    public UnityEvent OnSlashPerformed = new();
+    public UnityEvent OnSlashStart = new();
+    public UnityEvent OnSlashEnd = new();
     
     void Start()
     {
@@ -32,9 +33,14 @@ public class AnimationHandler : MonoBehaviour
         lastComboIdx++;
     }
 
-    public void SlashHit()
+    public void SlashHitStart()
     {
-        OnSlashPerformed?.Invoke();
+        OnSlashStart?.Invoke();
+    }
+    
+    public void SlashHitEnd()
+    {
+        OnSlashEnd?.Invoke();
     }
 
     public void EndSlash(int index)
