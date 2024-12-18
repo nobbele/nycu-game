@@ -1,23 +1,21 @@
 using UnityEngine;
 using System.Collections;
 
-public class DefaultEnemyAI : BaseEnemyAI
+public class DefaultEnemyAI : BaseEnemyAI<DefaultEnemyData>
 {
-    protected DefaultEnemyData defaultEnemyData => enemyData as DefaultEnemyData;
     private AudioSource audioSource;
 
     public override void Initialize(Transform player, Transform spawnPoint, BaseEnemyData data)
     {
-        if (data is not DefaultEnemyData)
+        if (data is not DefaultEnemyData defaultData)
         {
-            Debug.LogError($"DefaultEnemyAI requires DefaultEnemyData, but received {enemyData.GetType().Name}");
+            Debug.LogError($"DefaultEnemyAI requires DefaultEnemyData, but received {data.GetType().Name}");
             enabled = false;
             return;
         }
 
         base.Initialize(player, spawnPoint, data);
 
-        // Audio Source
         audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.playOnAwake = false;
         audioSource.spatialBlend = 1f;
@@ -25,6 +23,9 @@ public class DefaultEnemyAI : BaseEnemyAI
 
     protected override void UpdateBehavior()
     {
+        ValidateComponents();
+        if (!enabled) return;
+
         float distanceToPlayer = Vector3.Distance(player.position, transform.position);
         
         if (distanceToPlayer <= enemyData.attackRange)
@@ -43,20 +44,24 @@ public class DefaultEnemyAI : BaseEnemyAI
     
     private void ChasePlayer()
     {
-        if (animator != null) animator.SetBool("IsMoving", true);
+        if (!animator || !animator.isActiveAndEnabled) return;
+        
+        animator.SetBool("IsMoving", true);
         agent.SetDestination(player.position);
         RotateTowardsPlayer();
     }
     
     private void AttackPlayer()
     {
-        if (animator != null) animator.SetBool("IsMoving", false);
+        if (!animator || !animator.isActiveAndEnabled) return;
+
+        animator.SetBool("IsMoving", false);
         agent.SetDestination(transform.position);
         RotateTowardsPlayer();
         
         if (CheckTimer("attack"))
         {
-            if (animator != null) animator.SetTrigger("Attack");
+            animator.SetTrigger("Attack");
             
             if (player.TryGetComponent(out IDamageHandler damageHandler))
             {
@@ -67,7 +72,9 @@ public class DefaultEnemyAI : BaseEnemyAI
     
     private void WanderAroundSpawnPoint()
     {
-        if (animator != null) animator.SetBool("IsMoving", true);
+        if (!animator || !animator.isActiveAndEnabled) return;
+
+        animator.SetBool("IsMoving", true);
         
         if (CheckTimer("move"))
         {
@@ -83,7 +90,7 @@ public class DefaultEnemyAI : BaseEnemyAI
         
         if (agent.remainingDistance <= agent.stoppingDistance + 1f)
         {
-            if (animator != null) animator.SetBool("IsMoving", false);
+            animator.SetBool("IsMoving", false);
         }
     }
 
@@ -101,19 +108,16 @@ public class DefaultEnemyAI : BaseEnemyAI
 
     private IEnumerator ExecuteAttackEffects(IDamageHandler damageHandler)
     {
-        yield return new WaitForSeconds(defaultEnemyData.effectDelay);
+        yield return new WaitForSeconds(enemyData.effectDelay);
         
         DisplayAttackEffect(player.position);
         PlayAttackSound();
-        damageHandler.OnDamage(gameObject, defaultEnemyData.damageAmount);
+        damageHandler.OnDamage(gameObject, enemyData.damageAmount);
     }
 
     private void DisplayAttackEffect(Vector3 position)
     {
-        if (defaultEnemyData.attackEffect == null)
-        {
-            return;
-        }
+        if (enemyData.attackEffect == null) return;
 
         Vector3 effectPosition = position;
         if (Physics.Raycast(position + Vector3.up, Vector3.down, out RaycastHit hit, 10f))
@@ -125,17 +129,16 @@ public class DefaultEnemyAI : BaseEnemyAI
             effectPosition.y = 0f;
         }
 
-        GameObject effect = Instantiate(defaultEnemyData.attackEffect, effectPosition, Quaternion.identity);
-        Vector3 currentScale = effect.transform.localScale;
-        effect.transform.localScale = Vector3.Scale(currentScale, defaultEnemyData.effectScale);
-        Destroy(effect, defaultEnemyData.effectDuration);
+        GameObject effect = Instantiate(enemyData.attackEffect, effectPosition, Quaternion.identity);
+        effect.transform.localScale = Vector3.Scale(effect.transform.localScale, enemyData.effectScale);
+        Destroy(effect, enemyData.effectDuration);
     }
 
     private void PlayAttackSound()
     {
-        if (audioSource != null && defaultEnemyData.attackSound != null)
+        if (audioSource != null && enemyData.attackSound != null)
         {
-            audioSource.clip = defaultEnemyData.attackSound;
+            audioSource.clip = enemyData.attackSound;
             audioSource.Play();
         }
     }

@@ -1,139 +1,84 @@
 using System;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Enemy : MonoBehaviour, IDamageHandler
+public class Enemy : BaseEnemy<BaseEnemyData>
 {
-    public BaseEnemyData enemyData;
-    public int Health;
-    public bool IsDead => Health <= 0;
-    public event Action onDeath;
-    public GameObject meshInstance;
-
-    public EnemyHealthDisplay healthDisplay;
-
-    public static void SpawnAt(Vector3 spawnPosition, BaseEnemyData enemyData, Transform spawnerCenter, Action OnEnemyDeath, GameObject spawnEffectPrefab = null) {
-        GameObject enemy = new GameObject("Enemy");
-        enemy.transform.position = spawnPosition;        
-
-        // Enemy
-        Enemy enemyScript = enemy.AddComponent<Enemy>();
-        enemyScript.enemyData = enemyData;
-        enemyScript.onDeath += OnEnemyDeath;
-
-        // Enemy AI
-        BaseEnemyAI enemyAI;
-        if (enemyData.enemyAI == null)
+    public static void SpawnAt(Vector3 position, BaseEnemyData data, Transform center, Action onDeath, GameObject spawnEffect = null)
+    {
+        // Ensure spawn position is on NavMesh
+        if (NavMesh.SamplePosition(position, out NavMeshHit navMeshHit, 5f, NavMesh.AllAreas))
         {
-            enemyAI = enemy.AddComponent<DefaultEnemyAI>();
+            position = navMeshHit.position;
         }
         else
         {
-            enemyAI = enemy.AddComponent(enemyData.enemyAI.GetType()) as BaseEnemyAI;
+            Debug.LogWarning($"Spawn position {position} is not on NavMesh. Skipping spawn.");
+            return;
         }
-        enemyAI.Initialize(GameObject.FindWithTag("Player").transform, spawnerCenter, enemyData);
 
-        // Nav Mesh Agent
-        NavMeshAgent navMeshAgent = enemy.AddComponent<NavMeshAgent>();
+        // Ensure enemy is spawned on the ground
+        if (Physics.Raycast(position + Vector3.up * 10f, Vector3.down, out RaycastHit groundHit, Mathf.Infinity))
+        {
+            position.y = groundHit.point.y;
+        }
+        else
+        {
+            Debug.LogWarning($"Cannot find ground below spawn position {position}. Skipping spawn.");
+            return;
+        }
+
+        var enemyObj = new GameObject("Enemy");
+        enemyObj.transform.position = position;
+
+        // NavMeshAgent
+        var navMeshAgent = enemyObj.AddComponent<NavMeshAgent>();
         navMeshAgent.speed = 3.5f;
 
         // Collider
-        CapsuleCollider collider = enemy.AddComponent<CapsuleCollider>();
-        collider.height = 2;
+        var capsuleCollider = enemyObj.AddComponent<CapsuleCollider>();
+        capsuleCollider.height = 2f;
+
+        // Setup enemy component
+        var enemy = enemyObj.AddComponent<Enemy>();
+        enemy.enemyData = data;
+        enemy.onDeath += onDeath;
 
         // Create mesh instance
-        if (enemyData.enemyMesh != null)
+        if (data.enemyMesh != null)
         {
-            enemyScript.meshInstance = Instantiate(enemyData.enemyMesh, enemy.transform.position, Quaternion.identity, enemy.transform);
-            if (enemyScript.meshInstance.TryGetComponent(out Animator animator)) {
-                animator.runtimeAnimatorController = enemyData.animatorController;
-            }
+            enemy.meshInstance = Instantiate(data.enemyMesh, position, Quaternion.identity, enemyObj.transform);
+            enemy.meshInstance.transform.localScale = Vector3.Scale(
+                enemy.meshInstance.transform.localScale, 
+                data.enemyScale
+            );
         }
 
-        // Scale    
-        Vector3 currentScale = enemyScript.meshInstance.transform.localScale;
-        enemyScript.meshInstance.transform.localScale = Vector3.Scale(currentScale, enemyData.enemyScale);
+        // Initialize enemy first
+        enemy.InitializeComponents();
 
-        // Health Display
-        var hdPrefab = AssetDatabase.LoadAssetAtPath<EnemyHealthDisplay>("Assets/2_Prefab/Enemy UI.prefab");
-        enemyScript.healthDisplay = Instantiate(hdPrefab, enemy.transform);
-        enemyScript.healthDisplay.transform.Translate(Vector3.up * 1f);
-        enemyScript.healthDisplay.gameObject.SetActive(false);
-
-        // Spawning Effect
-        if (spawnEffectPrefab != null) {
-            var spawnEffect = Instantiate(spawnEffectPrefab);
-            spawnEffect.transform.position = spawnPosition + Vector3.up * 1f; 
-            spawnEffect.transform.Translate(Vector3.up * 2f);
-            spawnEffect.GetComponent<ParticleSystem>().Play();
-            spawnEffect.GetComponent<AudioSource>().Play();
-        }
-    }
-
-    void Start()
-    {
-        Health = enemyData.health;
-
-        if (meshInstance == null)
+        // Add and initialize AI after enemy is ready
+        var playerTransform = GameObject.FindWithTag("Player")?.transform;
+        if (playerTransform != null)
         {
-            if (TryGetComponent(out Animator _))
+            Type aiType = data.GetAIType();
+            var ai = enemyObj.AddComponent(aiType);
+            if (ai is IEnemyAI enemyAI)
             {
-                meshInstance = gameObject;
+                enemyAI.Initialize(playerTransform, center, data);
             }
             else
             {
-                Animator childAnimator = GetComponentInChildren<Animator>();
-                if (childAnimator != null)
-                {
-                    meshInstance = childAnimator.gameObject;
-                }
+                Debug.LogError($"AI type {aiType.Name} does not implement IEnemyAI");
             }
         }
 
-        if (enemyData?.animatorController != null)
+        // Create spawn effect if provided
+        if (spawnEffect != null)
         {
-            Animator targetAnimator = null;
-            if (meshInstance != null)
-            {
-                targetAnimator = meshInstance.GetComponent<Animator>();
-            }
-
-            if (targetAnimator == null)
-            {
-                targetAnimator = GetComponent<Animator>();
-            }
-
-            if (targetAnimator != null)
-            {
-                targetAnimator.runtimeAnimatorController = enemyData.animatorController;
-            }
+            var effect = Instantiate(spawnEffect, position + Vector3.up * 3f, Quaternion.identity);
+            effect.GetComponent<ParticleSystem>()?.Play();
+            effect.GetComponent<AudioSource>()?.Play();
         }
-    }
-
-    void Update()
-    {
-        if (Health < enemyData.health) {
-            if (!healthDisplay.gameObject.activeSelf) healthDisplay.gameObject.SetActive(true);
-            healthDisplay.HealthPercent = Health / (float)enemyData.health;
-        } else {
-            if (healthDisplay.gameObject.activeSelf) healthDisplay.gameObject.SetActive(false);
-        }
-        
-        if (IsDead)
-            OnDead();
-    }
-
-    void OnDead()
-    {
-        onDeath?.Invoke();
-        gameObject.SetActive(false);
-    }
-
-    public void OnDamage(GameObject source, int damage)
-    {
-        if (source == this) return;
-
-        Health -= damage;
     }
 }

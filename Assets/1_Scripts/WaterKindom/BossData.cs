@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.AI;
 
 public class BossData : BaseEnemyData
 {
@@ -18,4 +17,6 @@ public class BossData : BaseEnemyData
     public float flameAttackWeight = 30f;
     [Range(0f, 100f)]
     public float clawAttackWeight = 20f;
+
+    public override System.Type GetAIType() => typeof(BossAI);
 }

@@ -439,12 +439,27 @@ PrefabInstance:
     - target: {fileID: 4710406181455071900, guid: fad90c457314e2746ba3bba5ea5fe5ec,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.03751185
+      value: 0.037511867
       objectReference: {fileID: 0}
     - target: {fileID: 4710406181455071900, guid: fad90c457314e2746ba3bba5ea5fe5ec,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.052303948
+      value: 0.052303962
+      objectReference: {fileID: 0}
+    - target: {fileID: 4919153832859849386, guid: fad90c457314e2746ba3bba5ea5fe5ec,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.000000019901098
+      objectReference: {fileID: 0}
+    - target: {fileID: 4919153832859849386, guid: fad90c457314e2746ba3bba5ea5fe5ec,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.00000013960718
+      objectReference: {fileID: 0}
+    - target: {fileID: 4919153832859849386, guid: fad90c457314e2746ba3bba5ea5fe5ec,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.0000009728576
       objectReference: {fileID: 0}
     - target: {fileID: 7811588353237379528, guid: fad90c457314e2746ba3bba5ea5fe5ec,
         type: 3}
@@ -679,7 +694,7 @@ MonoBehaviour:
   enemyScale: {x: 1, y: 1, z: 1}
   enemyAI: {fileID: 759305018}
   animatorController: {fileID: 9100000, guid: a140d0f884d3b384da46d5d445315b81, type: 2}
-  health: 20
+  health: 40
   attackRange: 9
   chaseRange: 0
   wanderRadius: 15
@@ -690,9 +705,9 @@ MonoBehaviour:
   biteDamage: 10
   flameDamage: 10
   clawDamage: 15
-  biteAttackWeight: 0
-  flameAttackWeight: 100
-  clawAttackWeight: 0
+  biteAttackWeight: 50
+  flameAttackWeight: 30
+  clawAttackWeight: 20
 --- !u!114 &759305018
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -720,7 +735,7 @@ MonoBehaviour:
   enemyData: {fileID: 759305017}
   Health: 0
   meshInstance: {fileID: 759305005}
-  healthDisplay: {fileID: 1511853490}
+  healthDisplay: {fileID: 0}
 --- !u!114 &759305022
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2200,18 +2215,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1511853490 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 1433645224759284529, guid: fad90c457314e2746ba3bba5ea5fe5ec,
-    type: 3}
-  m_PrefabInstance: {fileID: 688333054}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7fc284f9550c7e00ebd973bd83cc8773, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
