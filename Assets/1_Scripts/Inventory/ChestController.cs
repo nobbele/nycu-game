@@ -21,7 +21,7 @@ public class ChestController : MonoBehaviour, IInteractable
     [SerializeField] private float maxInteractAngle = 45f;
     private Animator animator;
 
-    private InventoryUI inventoryUI;
+    private ChestPanel chestPanel;
     private bool isInitialized = false;
 
     private void Awake()
@@ -56,16 +56,16 @@ public class ChestController : MonoBehaviour, IInteractable
 
     public void OnInteract(GameObject player)
     {
-        if (inventoryUI == null && player != null)
+        if (chestPanel == null && player != null)
         {
             var playerController = player.GetComponent<PlayerUIController>();
             if (playerController != null)
             {
-                inventoryUI = playerController.InventoryUI;
+                chestPanel = playerController.ChestPanel;
             }
         }
 
-        if (inventoryUI != null)
+        if (chestPanel != null)
         {
             if (!isInitialized)
             {
@@ -73,7 +73,7 @@ public class ChestController : MonoBehaviour, IInteractable
             }
 
             PlayOpenAnimation();
-            inventoryUI.ShowChestUI(this);
+            chestPanel.ShowChestUI(this);
         }
         else
         {

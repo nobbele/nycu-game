@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
-public class InventoryUI : MonoBehaviour
+public class ChestPanel : MonoBehaviour
 {
     [Header("UI References")]
     [SerializeField] private Button closeButton;
@@ -28,13 +28,13 @@ public class InventoryUI : MonoBehaviour
     {
         if (backpackSlots == null || backpackSlots.Length == 0)
         {
-            Debug.LogError("InventoryUI: No backpack slots found!");
+            Debug.LogError("chestPanel: No backpack slots found!");
             return;
         }
 
         if (chestSlots == null || chestSlots.Length == 0)
         {
-            Debug.LogError("InventoryUI: No chest slots found!");
+            Debug.LogError("chestPanel: No chest slots found!");
             return;
         }
 
@@ -49,12 +49,12 @@ public class InventoryUI : MonoBehaviour
             }
             else
             {
-                Debug.LogError("InventoryUI: Player inventory component not found!");
+                Debug.LogError("chestPanel: Player inventory component not found!");
             }
         }
         else
         {
-            Debug.LogError("InventoryUI: Player instance not found!");
+            Debug.LogError("chestPanel: Player instance not found!");
         }
 
         if (closeButton != null)
