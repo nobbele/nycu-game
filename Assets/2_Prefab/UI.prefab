@@ -247,6 +247,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Character Panel
       objectReference: {fileID: 0}
+    - target: {fileID: 452517943616659000, guid: f6cc1ff3c57baa5429b37ccf435c1018,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6382471999674192613, guid: f6cc1ff3c57baa5429b37ccf435c1018,
         type: 3}
       propertyPath: m_Pivot.x
@@ -476,7 +481,7 @@ PrefabInstance:
     - target: {fileID: 7711930291808590744, guid: c894b05a865527341aca5eaae306c74e,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -605,7 +610,7 @@ PrefabInstance:
     - target: {fileID: 8886529764819924330, guid: 38f25f7ad7d6d8f439bcdb1d08c2ea27,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
