@@ -19,9 +19,9 @@ public class SkillUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
     public Skill skill;
     private SkillSlot equippedSlot;
     private Image draggableIcon;
-    private Transform originalParent;
     private Canvas targetCanvas;
     private int lvl = 0;
+    public int CurrentLevel => lvl;
     private bool skillUnlocked = false;
     
     private void Awake()
@@ -84,8 +84,6 @@ public class SkillUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
     {
         if (targetCanvas == null || !skillUnlocked || skill == null) return;
         
-        originalParent = transform.parent;
-        
         // Create draggable icon instance
         draggableIcon = Instantiate(icon, targetCanvas.transform);
         draggableIcon.raycastTarget = false;
@@ -109,19 +107,13 @@ public class SkillUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        if (!skillUnlocked || skill == null)
-        {
-            transform.SetParent(originalParent);
-            return;
-        }
+        if (!skillUnlocked || skill == null) return;
         
         if (draggableIcon != null)
         {
             // Destroy the draggable icon after the drag ends
             Destroy(draggableIcon.gameObject);
         }
-        
-        transform.SetParent(originalParent); // Return to original parent if no valid drop target
     }
 
     public bool IsSkillUnlocked()

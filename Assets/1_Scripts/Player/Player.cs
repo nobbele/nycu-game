@@ -4,8 +4,8 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerUIController))]
 [RequireComponent(typeof(PlayerCombatSystem))]
 [RequireComponent(typeof(PlayerInputHandler))]
-[RequireComponent(typeof(Inventory))]             // Add inventory requirement
-[RequireComponent(typeof(InteractionController))] // Add interaction requirement
+[RequireComponent(typeof(Inventory))]             
+[RequireComponent(typeof(InteractionController))]
 public class Player : MonoBehaviour
 {
     public static Player Instance { get; private set; }
@@ -44,10 +44,9 @@ public class Player : MonoBehaviour
     
     void Start()
     {
-        // Initialize skill slots from UI to combat system
-        if (uiController.SkillPanel != null)
+        if (uiController.CharacterPanel != null)
         {
-            combatSystem.SetSkillSlots(uiController.SkillPanel.SkillSlots);
+            combatSystem.SetSkillSlots(uiController.CharacterPanel.SkillSlots);
         }
     }
     
@@ -75,7 +74,6 @@ public class Player : MonoBehaviour
     
     private void GameOver()
     {
-        // Game over logic here
         Debug.Log("Game Over");
     }
 }

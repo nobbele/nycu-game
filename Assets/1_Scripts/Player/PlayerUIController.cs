@@ -5,42 +5,40 @@ public class PlayerUIController : MonoBehaviour
 {
     [SerializeField] private PlayerStats playerStats;
     [SerializeField] private HUD hud;
-    [SerializeField] private CharacterMenu characterMenu;
-    [SerializeField] private SkillPanel skillPanel;
+    [SerializeField] private CharacterPanel characterPanel;
     [SerializeField] private InventoryUI inventoryUI;
     [SerializeField] private GameObject promptPanel;
     [SerializeField] private CinemachineFreeLook cinemachineFreeLook;
-    public SkillPanel SkillPanel => skillPanel;
+    
+    public CharacterPanel CharacterPanel => characterPanel;
     public InventoryUI InventoryUI => inventoryUI;
     public GameObject PromptPanel => promptPanel;
 
-    public bool IsAnyMenuOpen => 
-        (characterMenu?.gameObject?.activeInHierarchy ?? false) || 
-        (skillPanel?.gameObject?.activeInHierarchy ?? false) ||
-        (inventoryUI?.gameObject?.activeInHierarchy ?? false);
+    public bool IsAnyMenuOpen => characterPanel.gameObject.activeSelf || 
+                                inventoryUI.gameObject.activeSelf;
     
     private MovementController movementController;
     
     void Start()
     {
         movementController = GetComponent<MovementController>();
-
-        // Initialize UI states
-        characterMenu.gameObject.SetActive(false);
-        skillPanel.gameObject.SetActive(false);
-        inventoryUI.gameObject.SetActive(false);
-        promptPanel.SetActive(false);
-
-        SetupCharacterMenu();
-        SetupSkillPanel();
+        InitializeUIStates();
+        SetupCharacterPanel();
     }
     
     void Update()
     {
         UpdateHUD();
-        UpdateCharacterMenu();
+        UpdateAttributePointsText();
         HandleMenuState();
         UpdateCursorState();
+    }
+
+    private void InitializeUIStates()
+    {
+        characterPanel.gameObject.SetActive(false);
+        inventoryUI.gameObject.SetActive(false);
+        promptPanel.SetActive(false);
     }
     
     private void UpdateHUD()
@@ -49,45 +47,56 @@ public class PlayerUIController : MonoBehaviour
         hud.UpdateExperience(playerStats.Experience, playerStats.XpRequired, playerStats.Level);
     }
     
-    private void UpdateCharacterMenu()
+    private void UpdateAttributePointsText()
     {
-        characterMenu.AttributePointsLeftText.text = $"Points Left: {playerStats.AttributePoints}";
-        characterMenu.DamageAttributeUI.SetEnabled(playerStats.AttributePoints > 0);
-        characterMenu.HealthAttributeUI.SetEnabled(playerStats.AttributePoints > 0);
+        if (characterPanel.gameObject.activeSelf)
+        {
+            characterPanel.AttributePointsLeftText.text = $"Points Left: {playerStats.AttributePoints}";
+        }
     }
     
-    private void SetupCharacterMenu()
+    private void SetupCharacterPanel()
     {
         var attributes = playerStats.GetAttributes();
         
-        characterMenu.DamageAttributeUI.Title = "Damage";
-        characterMenu.DamageAttributeUI.Value = attributes.Damage;
-        characterMenu.HealthAttributeUI.Title = "Health";
-        characterMenu.HealthAttributeUI.Value = attributes.Health;
-    }
-    
-    private void SetupSkillPanel()
-    {
-        if (skillPanel != null)
+        if (characterPanel.DamageAttributeUI.TryGetComponent<AttributeUI>(out var damageUI))
         {
-            skillPanel.SetSkillPoint(playerStats.SkillPoints);
+            damageUI.Initialize(playerStats);
+            damageUI.SetValue(attributes.Damage);
         }
+        
+        if (characterPanel.HealthAttributeUI.TryGetComponent<AttributeUI>(out var healthUI))
+        {
+            healthUI.Initialize(playerStats);
+            healthUI.SetValue(attributes.Health);
+        }
+
+        characterPanel.SetSkillPoint(playerStats.SkillPoints);
     }
     
     private void HandleMenuState()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.B))
         {
-            characterMenu.gameObject.SetActive(!characterMenu.gameObject.activeInHierarchy);
-        }
-        
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            Cursor.lockState = CursorLockMode.None;
-            skillPanel.gameObject.SetActive(!skillPanel.gameObject.activeInHierarchy);
+            ToggleCharacterPanel();
         }
         
         movementController.DisabledMovement = IsAnyMenuOpen;
+    }
+
+    private void ToggleCharacterPanel()
+    {
+        bool newState = !characterPanel.gameObject.activeSelf;
+        characterPanel.gameObject.SetActive(newState);
+        
+        if (newState)
+        {
+            Time.timeScale = 0f;
+        }
+        else
+        {
+            Time.timeScale = 1f;
+        }
     }
     
     private void UpdateCursorState()

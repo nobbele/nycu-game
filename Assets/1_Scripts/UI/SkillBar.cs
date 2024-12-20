@@ -5,7 +5,7 @@ public class SkillBar : MonoBehaviour
     [SerializeField] private string[] keyBindings = { "1", "2", "3", "4" };
     
     private SkillBarSlot[] skillBarSlots;
-    private SkillPanel skillPanel;
+    private CharacterPanel characterPanel;
 
     private void Start()
     {
@@ -15,7 +15,6 @@ public class SkillBar : MonoBehaviour
 
     private void InitializeReferences()
     {
-        // Get Player and required components
         var player = Player.Instance;
         if (!player)
         {
@@ -23,15 +22,13 @@ public class SkillBar : MonoBehaviour
             return;
         }
 
-        // Get SkillPanel reference
-        skillPanel = player.GetComponent<PlayerUIController>()?.SkillPanel;
-        if (!skillPanel)
+        characterPanel = player.GetComponent<PlayerUIController>()?.CharacterPanel;
+        if (!characterPanel)
         {
-            Debug.LogError("SkillBarUI: SkillPanel not found!");
+            Debug.LogError("SkillBarUI: CharacterPanel not found!");
             return;
         }
 
-        // Get local skill bar slots
         skillBarSlots = GetComponentsInChildren<SkillBarSlot>();
         if (skillBarSlots.Length == 0)
         {
@@ -39,7 +36,6 @@ public class SkillBar : MonoBehaviour
             return;
         }
 
-        // Initialize key bindings
         for (int i = 0; i < skillBarSlots.Length; i++)
         {
             if (i < keyBindings.Length)
@@ -51,25 +47,21 @@ public class SkillBar : MonoBehaviour
 
     private void SetupSkillSynchronization()
     {
-        if (!skillPanel || skillBarSlots == null) return;
+        if (!characterPanel || skillBarSlots == null) return;
 
-        // Sync the number of slots available
-        int slotCount = Mathf.Min(skillPanel.SkillSlots.Count, skillBarSlots.Length);
+        int slotCount = Mathf.Min(characterPanel.SkillSlots.Count, skillBarSlots.Length);
 
-        // Set up synchronization for each slot
         for (int i = 0; i < slotCount; i++)
         {
             int index = i;
-            var panelSlot = skillPanel.SkillSlots[index];
+            var panelSlot = characterPanel.SkillSlots[index];
             var barSlot = skillBarSlots[index];
 
-            // Sync from panel to bar
             panelSlot.onSkillChanged.AddListener((skill) =>
             {
                 barSlot.UpdateSkill(skill);
             });
 
-            // Initial sync if panel slot has a skill
             if (panelSlot.equippedSkill != null)
             {
                 barSlot.UpdateSkill(panelSlot.equippedSkill);
