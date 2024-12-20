@@ -728,7 +728,7 @@ GameObject:
   - component: {fileID: 6104288536739412698}
   - component: {fileID: 5848712447432899736}
   m_Layer: 5
-  m_Name: Inventory Panel
+  m_Name: Chest Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

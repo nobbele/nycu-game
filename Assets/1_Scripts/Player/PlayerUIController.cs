@@ -6,16 +6,16 @@ public class PlayerUIController : MonoBehaviour
     [SerializeField] private PlayerStats playerStats;
     [SerializeField] private HUD hud;
     [SerializeField] private CharacterPanel characterPanel;
-    [SerializeField] private InventoryUI inventoryUI;
+    [SerializeField] private ChestPanel chestPanel;
     [SerializeField] private GameObject promptPanel;
     [SerializeField] private CinemachineFreeLook cinemachineFreeLook;
     
     public CharacterPanel CharacterPanel => characterPanel;
-    public InventoryUI InventoryUI => inventoryUI;
+    public ChestPanel ChestPanel => chestPanel;
     public GameObject PromptPanel => promptPanel;
 
     public bool IsAnyMenuOpen => characterPanel.gameObject.activeSelf || 
-                                inventoryUI.gameObject.activeSelf;
+                                chestPanel.gameObject.activeSelf;
     
     private MovementController movementController;
     
@@ -37,7 +37,7 @@ public class PlayerUIController : MonoBehaviour
     private void InitializeUIStates()
     {
         characterPanel.gameObject.SetActive(false);
-        inventoryUI.gameObject.SetActive(false);
+        chestPanel.gameObject.SetActive(false);
         promptPanel.SetActive(false);
     }
     

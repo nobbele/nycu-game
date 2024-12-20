@@ -48,6 +48,11 @@ PrefabInstance:
       objectReference: {fileID: 5654085584387823335}
     - target: {fileID: 1956275909624171731, guid: 1c8e55cf303ba7f0b8a20a0df2217d07,
         type: 3}
+      propertyPath: chestPanel
+      value: 
+      objectReference: {fileID: 2669768335443657448}
+    - target: {fileID: 1956275909624171731, guid: 1c8e55cf303ba7f0b8a20a0df2217d07,
+        type: 3}
       propertyPath: inventoryUI
       value: 
       objectReference: {fileID: 2669768335443657448}
