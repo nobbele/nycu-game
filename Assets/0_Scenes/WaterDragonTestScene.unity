@@ -406,6 +406,18 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: 0.052148737
       objectReference: {fileID: 0}
+    - target: {fileID: 736710121926570596, guid: fad90c457314e2746ba3bba5ea5fe5ec,
+        type: 3}
+      propertyPath: WaterSkill.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: e882338a17c33444a93c74a88fa17ab8,
+        type: 2}
+    - target: {fileID: 736710121926570596, guid: fad90c457314e2746ba3bba5ea5fe5ec,
+        type: 3}
+      propertyPath: WaterSkill.Array.data[1]
+      value: 
+      objectReference: {fileID: 11400000, guid: bc04a626af9feb04ab0228cd91cbd2b7,
+        type: 2}
     - target: {fileID: 907920657387991578, guid: fad90c457314e2746ba3bba5ea5fe5ec,
         type: 3}
       propertyPath: m_Name
@@ -425,6 +437,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalPosition.z
       value: -12.69
+      objectReference: {fileID: 0}
+    - target: {fileID: 1807265495190638981, guid: fad90c457314e2746ba3bba5ea5fe5ec,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1974253662224053555, guid: fad90c457314e2746ba3bba5ea5fe5ec,
         type: 3}
