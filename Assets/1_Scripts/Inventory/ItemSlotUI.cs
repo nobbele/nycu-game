@@ -1,64 +1,39 @@
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using TMPro;
 using System;
 
+[RequireComponent(typeof(ItemUI))]
 public class ItemSlotUI : MonoBehaviour, IPointerClickHandler
 {
-    [SerializeField] public Image iconImage;
-    [SerializeField] public TextMeshProUGUI nameText;
-
-    private Item currentItem;
+    private ItemUI itemUI;
     private Action<Item> onItemClicked;
+
+    private void Awake()
+    {
+        itemUI = GetComponent<ItemUI>();
+        if (itemUI == null)
+        {
+            Debug.LogError($"Missing ItemUI component on {gameObject.name}");
+        }
+    }
 
     public void Setup(Item item, Action<Item> clickCallback)
     {
-        currentItem = item;
         onItemClicked = clickCallback;
-
-        if (item == null)
-        {
-            Clear();
-            return;
-        }
-
-        if (iconImage != null)
-        {
-            iconImage.sprite = item.icon;
-            iconImage.gameObject.SetActive(true);
-        }
-
-        if (nameText != null)
-        {
-            nameText.text = item.name;
-            nameText.gameObject.SetActive(true);
-        }
+        itemUI?.Setup(item, null);
     }
 
     public void Clear()
     {
-        currentItem = null;
         onItemClicked = null;
-
-        if (iconImage != null)
-        {
-            iconImage.sprite = null;
-            iconImage.gameObject.SetActive(false);
-        }
-
-        if (nameText != null)
-        {
-            nameText.text = "";
-            nameText.gameObject.SetActive(false);
-        }
+        itemUI?.Clear();
     }
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (currentItem != null && onItemClicked != null)
+        if (itemUI?.currentItem != null && onItemClicked != null)
         {
-            onItemClicked.Invoke(currentItem);
+            onItemClicked.Invoke(itemUI.currentItem);
         }
     }
 }

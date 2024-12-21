@@ -19,9 +19,9 @@ public class SkillUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
     public Skill skill;
     private SkillSlot equippedSlot;
     private Image draggableIcon;
-    private Transform originalParent;
     private Canvas targetCanvas;
     private int lvl = 0;
+    public int CurrentLevel => lvl;
     private bool skillUnlocked = false;
     
     private void Awake()
@@ -34,16 +34,30 @@ public class SkillUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
         }
 
         // Initialize UI state and bind button events
-        SetSkillLockState();
         increment.onClick.AddListener(AddLvl);
         decrement.onClick.AddListener(ReduceLvl);
+        
+        nameText.text = "";
+        lvText.text = "LV:0";
+        icon.sprite = null;
+        UpdateButtonStates(false);
+        SetSkillLockState();
     }
 
     public void SetSkill(Skill skill)
     {
         this.skill = skill;
-        nameText.text = skill.skillName;
-        icon.sprite = skill.icon;
+        if (skill != null)
+        {
+            nameText.text = skill.skillName;
+            icon.sprite = skill.icon;
+        }
+        else
+        {
+            nameText.text = "";
+            icon.sprite = null;
+        }
+        UpdateButtonStates(true);
     }
 
     public void AddLvl()
@@ -68,10 +82,7 @@ public class SkillUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
     
     public void OnBeginDrag(PointerEventData eventData)
     {
-        if (targetCanvas == null) return;
-        
-        originalParent = transform.parent;
-        if (!skillUnlocked) return;
+        if (targetCanvas == null || !skillUnlocked || skill == null) return;
         
         // Create draggable icon instance
         draggableIcon = Instantiate(icon, targetCanvas.transform);
@@ -86,7 +97,7 @@ public class SkillUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (!skillUnlocked) return;
+        if (!skillUnlocked || skill == null) return;
         
         if (draggableIcon != null)
         {
@@ -96,24 +107,18 @@ public class SkillUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        if (!skillUnlocked)
-        {
-            transform.SetParent(originalParent);
-            return;
-        }
+        if (!skillUnlocked || skill == null) return;
         
         if (draggableIcon != null)
         {
             // Destroy the draggable icon after the drag ends
             Destroy(draggableIcon.gameObject);
         }
-        
-        transform.SetParent(originalParent); // Return to original parent if no valid drop target
     }
 
     public bool IsSkillUnlocked()
     {
-        return skillUnlocked;
+        return skillUnlocked && skill != null;
     }
 
     public SkillSlot GetEquippedSlot()
@@ -126,22 +131,22 @@ public class SkillUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
         equippedSlot = i;
     }
 
-    public void SetEnabled(bool b)
+    public void SetEnabled(bool canUseSkillPoint)
     {
-        increment.interactable = b;
-        decrement.interactable = lvl > 0;
+        UpdateButtonStates(canUseSkillPoint);
+    }
+
+    private void UpdateButtonStates(bool canUseSkillPoint)
+    {
+        bool hasSkill = skill != null;
+        increment.interactable = canUseSkillPoint && hasSkill;
+        decrement.interactable = lvl > 0 && hasSkill;
     }
 
     public void SetSkillLockState()
     {
-        if (lvl < 1) {
-            blocker.SetActive(true);
-            skillUnlocked = false;
-        }
-        else
-        {
-            blocker.SetActive(false);
-            skillUnlocked = true;
-        }
+        skillUnlocked = lvl > 0 && skill != null;
+        blocker.SetActive(!skillUnlocked);
+        UpdateButtonStates(increment.interactable);
     }
 }

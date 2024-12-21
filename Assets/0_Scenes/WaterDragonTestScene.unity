@@ -406,6 +406,18 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: 0.052148737
       objectReference: {fileID: 0}
+    - target: {fileID: 736710121926570596, guid: fad90c457314e2746ba3bba5ea5fe5ec,
+        type: 3}
+      propertyPath: WaterSkill.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: e882338a17c33444a93c74a88fa17ab8,
+        type: 2}
+    - target: {fileID: 736710121926570596, guid: fad90c457314e2746ba3bba5ea5fe5ec,
+        type: 3}
+      propertyPath: WaterSkill.Array.data[1]
+      value: 
+      objectReference: {fileID: 11400000, guid: bc04a626af9feb04ab0228cd91cbd2b7,
+        type: 2}
     - target: {fileID: 907920657387991578, guid: fad90c457314e2746ba3bba5ea5fe5ec,
         type: 3}
       propertyPath: m_Name
@@ -426,6 +438,36 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: -12.69
       objectReference: {fileID: 0}
+    - target: {fileID: 1807265495190638981, guid: fad90c457314e2746ba3bba5ea5fe5ec,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1974253662224053555, guid: fad90c457314e2746ba3bba5ea5fe5ec,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.037511867
+      objectReference: {fileID: 0}
+    - target: {fileID: 1974253662224053555, guid: fad90c457314e2746ba3bba5ea5fe5ec,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.052303962
+      objectReference: {fileID: 0}
+    - target: {fileID: 2731122529433048669, guid: fad90c457314e2746ba3bba5ea5fe5ec,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2731122529433048669, guid: fad90c457314e2746ba3bba5ea5fe5ec,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2731122529433048669, guid: fad90c457314e2746ba3bba5ea5fe5ec,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3033517732070473029, guid: fad90c457314e2746ba3bba5ea5fe5ec,
         type: 3}
       propertyPath: m_AnchorMax.x
@@ -435,6 +477,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3455937867014188501, guid: fad90c457314e2746ba3bba5ea5fe5ec,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -11
+      objectReference: {fileID: 0}
+    - target: {fileID: 3455937867014188501, guid: fad90c457314e2746ba3bba5ea5fe5ec,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -12.4
       objectReference: {fileID: 0}
     - target: {fileID: 4710406181455071900, guid: fad90c457314e2746ba3bba5ea5fe5ec,
         type: 3}
@@ -460,6 +512,36 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalPosition.z
       value: 0.0000009728576
+      objectReference: {fileID: 0}
+    - target: {fileID: 6480789219666747321, guid: fad90c457314e2746ba3bba5ea5fe5ec,
+        type: 3}
+      propertyPath: SkillPoints
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6480789219666747321, guid: fad90c457314e2746ba3bba5ea5fe5ec,
+        type: 3}
+      propertyPath: AttributePoints
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7318411146877439295, guid: fad90c457314e2746ba3bba5ea5fe5ec,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.99641937
+      objectReference: {fileID: 0}
+    - target: {fileID: 7318411146877439295, guid: fad90c457314e2746ba3bba5ea5fe5ec,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.06626766
+      objectReference: {fileID: 0}
+    - target: {fileID: 7318411146877439295, guid: fad90c457314e2746ba3bba5ea5fe5ec,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.0061345077
+      objectReference: {fileID: 0}
+    - target: {fileID: 7318411146877439295, guid: fad90c457314e2746ba3bba5ea5fe5ec,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.052148737
       objectReference: {fileID: 0}
     - target: {fileID: 7811588353237379528, guid: fad90c457314e2746ba3bba5ea5fe5ec,
         type: 3}
@@ -692,7 +774,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyMesh: {fileID: 759305005}
   enemyScale: {x: 1, y: 1, z: 1}
-  enemyAI: {fileID: 759305018}
   animatorController: {fileID: 9100000, guid: a140d0f884d3b384da46d5d445315b81, type: 2}
   health: 40
   attackRange: 9
@@ -733,7 +814,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyData: {fileID: 759305017}
-  Health: 0
   meshInstance: {fileID: 759305005}
   healthDisplay: {fileID: 0}
 --- !u!114 &759305022
