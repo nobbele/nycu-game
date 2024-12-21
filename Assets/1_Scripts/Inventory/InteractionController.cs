@@ -25,7 +25,7 @@ public class InteractionController : MonoBehaviour
 
     private void Update()
     {
-        if (!isEnabled || uiController.IsAnyMenuOpen)
+        if (!isEnabled || uiController.IsAnyUIActive())
         {
             HidePrompt();
             return;

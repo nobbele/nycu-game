@@ -6,7 +6,7 @@ public class PlayerInputHandler : MonoBehaviour
     private PlayerUIController uiController;
     private PlayerCombatSystem combatSystem;
     
-    private bool IsMenuOpen => uiController.IsAnyMenuOpen;
+    private bool IsMenuOpen => uiController.IsAnyUIActive();
     
     void Start()
     {
