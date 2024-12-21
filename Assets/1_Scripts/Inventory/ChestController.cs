@@ -9,28 +9,29 @@ public class ChestController : MonoBehaviour, IInteractable
     {
         public string name;
         public Sprite icon;
+        public ItemType type = ItemType.Normal;
+        public int count = 1;
+        public int maxStack = 99;
     }
 
     [SerializeField] private List<InitialChestItem> initialItems = new List<InitialChestItem>();
-    private List<Item> items = new List<Item>();
+    private List<InventoryItem> items = new List<InventoryItem>();
     
     private UnityEvent onChestChanged = new UnityEvent();
     public UnityEvent OnChestChanged => onChestChanged;
     
+    [Header("Interaction Settings")]
     [SerializeField] private float maxInteractDistance = 3f;
     [SerializeField] private float maxInteractAngle = 45f;
+    
     private Animator animator;
-
     private ChestPanel chestPanel;
     private bool isInitialized = false;
 
     private void Awake()
     {
         InitializeItems();
-        if (animator == null)
-        {
-            animator = GetComponent<Animator>();
-        }
+        animator = GetComponent<Animator>();
     }
 
     private void InitializeItems()
@@ -42,15 +43,18 @@ public class ChestController : MonoBehaviour, IInteractable
         {
             if (initialItem.icon != null)
             {
-                items.Add(new Item(
+                items.Add(new InventoryItem(
                     System.Guid.NewGuid().ToString(),
                     initialItem.name,
-                    initialItem.icon
+                    initialItem.icon,
+                    initialItem.type,
+                    "",
+                    initialItem.count,
+                    initialItem.maxStack
                 ));
             }
         }
         isInitialized = true;
-        
         onChestChanged.Invoke();
     }
 
@@ -74,10 +78,6 @@ public class ChestController : MonoBehaviour, IInteractable
 
             PlayOpenAnimation();
             chestPanel.ShowChestUI(this);
-        }
-        else
-        {
-            Debug.LogWarning("Inventory UI reference not found!");
         }
     }
 
@@ -116,19 +116,24 @@ public class ChestController : MonoBehaviour, IInteractable
         return "Press E to open";
     }
 
-    public void AddItem(Item item)
+    public void AddItem(InventoryItem item)
     {
-        items.Add(item);
-        onChestChanged.Invoke();
+        if (item != null)
+        {
+            items.Add(item);
+            onChestChanged.Invoke();
+        }
     }
 
-    public void RemoveItem(Item item)
+    public void RemoveItem(InventoryItem item)
     {
-        items.Remove(item);
-        onChestChanged.Invoke();
+        if (items.Remove(item))
+        {
+            onChestChanged.Invoke();
+        }
     }
 
-    public List<Item> GetItems()
+    public List<InventoryItem> GetItems()
     {
         if (!isInitialized)
         {
