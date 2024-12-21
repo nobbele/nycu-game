@@ -8,6 +8,9 @@ using Random = UnityEngine.Random;
 public class BossEnemyGrass : BossEnemy<BossEnemyStageGrass>
 {
     public override string BossName => "Qaivnaenoss, Queen of the Forest";
+    
+    public const string BOSS_ID = "GrassKingdom";
+    public override string BossId => BOSS_ID;
 
     // private float minionSpawnTimer = 0;
     // private float fireBreathTimer = 0;

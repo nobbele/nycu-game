@@ -71,6 +71,10 @@ MonoBehaviour:
     m_Key: Key-bindings
     m_Metadata:
       m_Items: []
+  - m_Id: 18367586183335936
+    m_Key: load-game
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

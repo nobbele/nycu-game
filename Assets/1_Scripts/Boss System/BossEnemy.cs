@@ -18,6 +18,7 @@ using UnityEngine;
 
 public abstract class BossEnemyBase : MonoBehaviour {
     public abstract string BossName { get; }
+    public abstract string BossId { get; }
     public abstract int Health { get; protected set; }
     public abstract int MaxHealth { get; protected set; }
 

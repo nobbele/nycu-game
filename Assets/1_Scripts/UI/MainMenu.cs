@@ -1,11 +1,24 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour {
+    public Button loadButton;
+    
+    void Start()
+    {
+        loadButton.interactable = SaveSystem.HasSave && !SaveSystem.ClearedAllBosses();
+    }
+    
     public void PlayGame() {
-        // SceneManager.LoadScene("MainScene");
+        Debug.Log("New Game");
+        SaveSystem.ResetSaveData();
         SceneManager.LoadScene("MainHubScene");
-        Debug.Log("Play Game");
+    }
+    
+    public void LoadGame() {
+        Debug.Log("Load Game");
+        SceneManager.LoadScene("MainHubScene");
     }
 
     public void OpenSettings() {
@@ -13,7 +26,6 @@ public class MainMenu : MonoBehaviour {
     }
 
     public void QuitGame() {
-        // TODO: Implement "quit game"
         Debug.Log("Quit Game");
         Application.Quit();
     }

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class BossSystem : MonoBehaviour
@@ -5,11 +6,11 @@ public class BossSystem : MonoBehaviour
     public GameObject containmentWallsContainer;
     public BossEnemyBase bossEnemy;
     public BossUI ui;
-
+    
     Player player = null;
     bool battleFinished = false;
 
-    public BossSystem Instance;
+    [NonSerialized] public static BossSystem Instance;
 
     // public UnityEvent OnBossStart;
 
@@ -37,12 +38,16 @@ public class BossSystem : MonoBehaviour
 
         if (containmentWallsContainer != null) containmentWallsContainer.SetActive(false);
         if (MusicManager.Instance != null) MusicManager.Instance.PlayStageMusic();
+
+        if (string.IsNullOrWhiteSpace(bossEnemy.BossId)) throw new Exception("Boss ID is empty!");
+        
+        SaveSystem.SetBossClear(bossEnemy.BossId);
     }
 
     void Update()
     {
         ui.HealthPercent = bossEnemy.Health / (float)bossEnemy.MaxHealth;
-        if (bossEnemy.Health <= 0)
+        if (bossEnemy.Health <= 0 && !battleFinished)
         {
             OnBattleEnd();
         }

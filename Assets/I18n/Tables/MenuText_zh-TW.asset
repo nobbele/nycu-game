@@ -47,7 +47,7 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 629937954816
-    m_Localized: "\u958B\u59CB"
+    m_Localized: '[insert chinese for new game]'
     m_Metadata:
       m_Items: []
   - m_Id: 649420496896
@@ -72,6 +72,10 @@ MonoBehaviour:
       m_Items: []
   - m_Id: 1184720600182784
     m_Localized: "\u6309\u9375\u7D81\u5B9A"
+    m_Metadata:
+      m_Items: []
+  - m_Id: 18367586183335936
+    m_Localized: '[insert chinese for load game]'
     m_Metadata:
       m_Items: []
   references:
