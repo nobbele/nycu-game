@@ -26,18 +26,15 @@ public class ChestController : MonoBehaviour, IInteractable
     
     private Animator animator;
     private ChestPanel chestPanel;
-    private bool isInitialized = false;
 
     private void Awake()
     {
-        InitializeItems();
         animator = GetComponent<Animator>();
+        InitializeItems();
     }
 
     private void InitializeItems()
     {
-        if (isInitialized) return;
-        
         items.Clear();
         foreach (var initialItem in initialItems)
         {
@@ -54,7 +51,6 @@ public class ChestController : MonoBehaviour, IInteractable
                 ));
             }
         }
-        isInitialized = true;
         onChestChanged.Invoke();
     }
 
@@ -71,12 +67,8 @@ public class ChestController : MonoBehaviour, IInteractable
 
         if (chestPanel != null)
         {
-            if (!isInitialized)
-            {
-                InitializeItems();
-            }
-
             PlayOpenAnimation();
+            onChestChanged.Invoke();
             chestPanel.ShowChestUI(this);
         }
     }
@@ -135,10 +127,6 @@ public class ChestController : MonoBehaviour, IInteractable
 
     public List<InventoryItem> GetItems()
     {
-        if (!isInitialized)
-        {
-            InitializeItems();
-        }
         return items;
     }
 }

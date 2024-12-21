@@ -15,7 +15,6 @@ public class ChestPanel : MonoBehaviour
     private ChestController currentChest;
     private ItemSlotUI[] backpackSlots;
     private ItemSlotUI[] chestSlots;
-    private bool isRefreshing = false;
     private PlayerUIController playerUIController;
 
     private void Awake()
@@ -26,6 +25,13 @@ public class ChestPanel : MonoBehaviour
     }
 
     private void Start()
+    {
+        ValidateComponents();
+        SetupCloseButton();
+        RefreshUI();
+    }
+
+    private void ValidateComponents()
     {
         if (backpackSlots == null || backpackSlots.Length == 0)
         {
@@ -57,7 +63,10 @@ public class ChestPanel : MonoBehaviour
         {
             Debug.LogError("ChestPanel: Player instance not found!");
         }
+    }
 
+    private void SetupCloseButton()
+    {
         if (closeButton != null)
         {
             closeButton.onClick.AddListener(HideUI);
@@ -71,32 +80,37 @@ public class ChestPanel : MonoBehaviour
 
     private void OnEnable()
     {
-        StartCoroutine(RefreshUICoroutine());
+        RefreshUI();
     }
 
     public void ShowChestUI(ChestController chest)
     {
         if (chest == null || playerUIController == null) return;
 
+        UnsubscribeFromCurrentChest();
+        
+        currentChest = chest;
+        RefreshUI();
+        currentChest.OnChestChanged.AddListener(RefreshChestInventory);
+        
+        playerUIController.ShowUI(gameObject);
+    }
+
+    private void UnsubscribeFromCurrentChest()
+    {
         if (currentChest != null)
         {
             currentChest.OnChestChanged.RemoveListener(RefreshChestInventory);
+            currentChest = null;
         }
-
-        currentChest = chest;
-        currentChest.OnChestChanged.AddListener(RefreshChestInventory);
-        playerUIController.ShowUI(gameObject);
     }
 
     private void HideUI()
     {
-        StopAllCoroutines();
-        
         if (currentChest != null)
         {
             currentChest.PlayCloseAnimation();
-            currentChest.OnChestChanged.RemoveListener(RefreshChestInventory);
-            currentChest = null;
+            UnsubscribeFromCurrentChest();
         }
         
         if (playerUIController != null)
@@ -107,40 +121,36 @@ public class ChestPanel : MonoBehaviour
         ClearAllSlots();
     }
 
-    private IEnumerator RefreshUICoroutine()
+    private void RefreshUI()
     {
-        if (isRefreshing) yield break;
-        
-        isRefreshing = true;
-        yield return null;
-        
         RefreshPlayerInventory();
-        
-        if (currentChest != null)
-        {
-            yield return null;
-            RefreshChestInventory();
-            
-            yield return new WaitForSeconds(0.1f);
-            if (currentChest != null)
-            {
-                RefreshChestInventory();
-            }
-        }
-        
-        isRefreshing = false;
+        RefreshChestInventory();
     }
 
     private void RefreshChestInventory()
     {
-        if (currentChest == null) return;
+        if (currentChest == null) 
+        {
+            ClearChestSlots();
+            return;
+        }
 
+        List<InventoryItem> items = currentChest.GetItems();
+        UpdateChestSlots(items);
+    }
+
+    private void ClearChestSlots()
+    {
         foreach (var slot in chestSlots)
         {
             slot.Clear();
         }
+    }
 
-        List<InventoryItem> items = currentChest.GetItems();
+    private void UpdateChestSlots(List<InventoryItem> items)
+    {
+        ClearChestSlots();
+        
         for (int i = 0; i < items.Count && i < chestSlots.Length; i++)
         {
             if (items[i] != null)
@@ -154,12 +164,17 @@ public class ChestPanel : MonoBehaviour
     {
         if (playerInventory == null) return;
 
+        List<InventoryItem> items = playerInventory.GetItems();
+        UpdatePlayerSlots(items);
+    }
+
+    private void UpdatePlayerSlots(List<InventoryItem> items)
+    {
         foreach (var slot in backpackSlots)
         {
             slot.Clear();
         }
 
-        List<InventoryItem> items = playerInventory.GetItems();
         for (int i = 0; i < items.Count && i < backpackSlots.Length; i++)
         {
             if (items[i] != null)
@@ -184,20 +199,34 @@ public class ChestPanel : MonoBehaviour
 
         if (item.type == ItemType.Skill)
         {
-            var skillManager = player.GetComponent<SkillManager>();
-            if (skillManager != null)
+            HandleSkillItem(item);
+        }
+        else if (item.type == ItemType.Normal)
+        {
+            HandleNormalItem(item);
+        }
+    }
+
+    private void HandleSkillItem(InventoryItem item)
+    {
+        var skillManager = player.GetComponent<SkillManager>();
+        if (skillManager != null && skillManager.TryUnlockSkill(item.name))
+        {
+            if (playerUIController != null)
             {
-                if (skillManager.TryUnlockSkill(item.name))
-                {
-                    if (playerUIController != null)
-                    {
-                        playerUIController.ShowMessage($"Unlock {item.name}");
-                    }
-                    
-                    currentChest.RemoveItem(item);
-                    RefreshChestInventory();
-                }
+                playerUIController.ShowMessage($"Unlock {item.name}");
             }
+            
+            currentChest.RemoveItem(item);
+        }
+    }
+
+    private void HandleNormalItem(InventoryItem item)
+    {
+        if (playerInventory != null)
+        {
+            currentChest.RemoveItem(item);
+            playerInventory.AddItem(item);
         }
     }
 
@@ -220,10 +249,7 @@ public class ChestPanel : MonoBehaviour
             playerInventory.OnInventoryChanged.RemoveListener(RefreshPlayerInventory);
         }
 
-        if (currentChest != null)
-        {
-            currentChest.OnChestChanged.RemoveListener(RefreshChestInventory);
-        }
+        UnsubscribeFromCurrentChest();
 
         if (closeButton != null)
         {
