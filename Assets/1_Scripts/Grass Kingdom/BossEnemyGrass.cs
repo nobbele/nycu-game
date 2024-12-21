@@ -12,24 +12,22 @@ public class BossEnemyGrass : BossEnemy<BossEnemyStageGrass>
     public const string BOSS_ID = "GrassKingdom";
     public override string BossId => BOSS_ID;
 
-    // private float minionSpawnTimer = 0;
-    // private float fireBreathTimer = 0;
-
     public Transform spawnCenter;
     public float spawnRadius;
 
+    #region Unity Objects
     public ParticleSystem fireBreathingParticleSystem;
     public AudioSource fireBreathingSoundEffect;
     public GameObject spawnEffectPrefab;
+    
+    [NonSerialized] public Animator animator;
+    [NonSerialized] public NavMeshAgent agent;
+    #endregion
 
     public Vector3 fireBreathHalfExtents;
     public int fireBreathDamage;
 
     private GrassDragonAI dragonAi;
-
-    [NonSerialized] public Animator animator;
-    [NonSerialized] public NavMeshAgent agent;
-
     public bool animationBlock;
 
     private Vector3 targetPosition;
@@ -42,13 +40,8 @@ public class BossEnemyGrass : BossEnemy<BossEnemyStageGrass>
     }
 
 
-    protected override void OnBossActivated()  {
-        Debug.Log("Grass!!");
-        // minionSpawnTimer = CurrentStage.minionSpawnDist.Sample();
-        // fireBreathTimer = CurrentStage.fireBreathDist.Sample();
-
-        // dragonAi.State = GrassDragonState.Wandering;
-
+    protected override void OnBossActivated() 
+    {
         Scream();
         dragonAi.SetState(GrassDragonState.Wandering);
     }
