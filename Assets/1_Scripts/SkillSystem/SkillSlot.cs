@@ -73,22 +73,22 @@ public class SkillSlot : MonoBehaviour, IDropHandler
             // Update icon and ItemUI
             if (icon != null)
             {
-                icon.sprite = skillUI.skill.icon;
+                icon.sprite = skillUI.CurrentSkill.icon;
                 icon.gameObject.SetActive(true);
             }
             if (itemUI != null)
             {
                 Item skillItem = new Item(
-                    skillUI.skill.name,
-                    skillUI.skill.skillName,
-                    skillUI.skill.icon,
+                    skillUI.CurrentSkill.name,
+                    skillUI.CurrentSkill.skillName,
+                    skillUI.CurrentSkill.icon,
                     defaultInfo // Use the default info text
                 );
                 itemUI.Setup(skillItem, null);
             }
             
             equippedSkillUI = skillUI;
-            equippedSkill = skillUI.skill;
+            equippedSkill = skillUI.CurrentSkill;
             skillUI.SetEquippedSlot(this);
             equippedSkill.Reset();
             

@@ -15,7 +15,7 @@ public class ChestPanel : MonoBehaviour
     private ChestController currentChest;
     private ItemSlotUI[] backpackSlots;
     private ItemSlotUI[] chestSlots;
-    private bool isRefreshing = false;
+    private PlayerUIController playerUIController;
 
     private void Awake()
     {
@@ -26,15 +26,22 @@ public class ChestPanel : MonoBehaviour
 
     private void Start()
     {
+        ValidateComponents();
+        SetupCloseButton();
+        RefreshUI();
+    }
+
+    private void ValidateComponents()
+    {
         if (backpackSlots == null || backpackSlots.Length == 0)
         {
-            Debug.LogError("chestPanel: No backpack slots found!");
+            Debug.LogError("ChestPanel: No backpack slots found!");
             return;
         }
 
         if (chestSlots == null || chestSlots.Length == 0)
         {
-            Debug.LogError("chestPanel: No chest slots found!");
+            Debug.LogError("ChestPanel: No chest slots found!");
             return;
         }
 
@@ -49,88 +56,100 @@ public class ChestPanel : MonoBehaviour
             }
             else
             {
-                Debug.LogError("chestPanel: Player inventory component not found!");
+                Debug.LogError("ChestPanel: Player inventory component not found!");
             }
         }
         else
         {
-            Debug.LogError("chestPanel: Player instance not found!");
+            Debug.LogError("ChestPanel: Player instance not found!");
         }
+    }
 
+    private void SetupCloseButton()
+    {
         if (closeButton != null)
         {
             closeButton.onClick.AddListener(HideUI);
         }
     }
 
+    public void Initialize(PlayerUIController controller)
+    {
+        playerUIController = controller;
+    }
+
     private void OnEnable()
     {
-        StartCoroutine(RefreshUICoroutine());
+        RefreshUI();
     }
 
     public void ShowChestUI(ChestController chest)
     {
-        if (chest == null) return;
+        if (chest == null || playerUIController == null) return;
 
+        UnsubscribeFromCurrentChest();
+        
+        currentChest = chest;
+        RefreshUI();
+        currentChest.OnChestChanged.AddListener(RefreshChestInventory);
+        
+        playerUIController.ShowUI(gameObject);
+    }
+
+    private void UnsubscribeFromCurrentChest()
+    {
         if (currentChest != null)
         {
             currentChest.OnChestChanged.RemoveListener(RefreshChestInventory);
+            currentChest = null;
         }
-
-        currentChest = chest;
-        currentChest.OnChestChanged.AddListener(RefreshChestInventory);
-        
-        // Disable interaction controller when inventory is shown
-        if (player != null)
-        {
-            var interactionController = player.GetComponent<InteractionController>();
-            if (interactionController != null)
-            {
-                interactionController.SetEnabled(false);
-            }
-        }
-        
-        gameObject.SetActive(true);
     }
 
-    private IEnumerator RefreshUICoroutine()
+    private void HideUI()
     {
-        if (isRefreshing) yield break;
-        
-        isRefreshing = true;
-        
-        // Wait for a frame to ensure all components are ready
-        yield return null;
-        
-        RefreshPlayerInventory();
-        
         if (currentChest != null)
         {
-            // Wait for another frame to ensure chest items are initialized
-            yield return null;
-            RefreshChestInventory();
-            
-            // Double check after a short delay
-            yield return new WaitForSeconds(0.1f);
-            if (currentChest != null)
-            {
-                RefreshChestInventory();
-            }
+            currentChest.PlayCloseAnimation();
+            UnsubscribeFromCurrentChest();
         }
         
-        isRefreshing = false;
+        if (playerUIController != null)
+        {
+            playerUIController.HideUI(gameObject);
+        }
+        
+        ClearAllSlots();
+    }
+
+    private void RefreshUI()
+    {
+        RefreshPlayerInventory();
+        RefreshChestInventory();
     }
 
     private void RefreshChestInventory()
     {
-        if (currentChest == null) return;
+        if (currentChest == null) 
+        {
+            ClearChestSlots();
+            return;
+        }
 
+        List<InventoryItem> items = currentChest.GetItems();
+        UpdateChestSlots(items);
+    }
+
+    private void ClearChestSlots()
+    {
         foreach (var slot in chestSlots)
         {
             slot.Clear();
         }
+    }
 
-        List<Item> items = currentChest.GetItems();
+    private void UpdateChestSlots(List<InventoryItem> items)
+    {
+        ClearChestSlots();
         
         for (int i = 0; i < items.Count && i < chestSlots.Length; i++)
         {
@@ -145,12 +164,17 @@ public class ChestPanel : MonoBehaviour
     {
         if (playerInventory == null) return;
 
+        List<InventoryItem> items = playerInventory.GetItems();
+        UpdatePlayerSlots(items);
+    }
+
+    private void UpdatePlayerSlots(List<InventoryItem> items)
+    {
         foreach (var slot in backpackSlots)
         {
             slot.Clear();
         }
 
-        List<Item> items = playerInventory.GetItems();
         for (int i = 0; i < items.Count && i < backpackSlots.Length; i++)
         {
             if (items[i] != null)
@@ -160,48 +184,50 @@ public class ChestPanel : MonoBehaviour
         }
     }
 
-    private void OnPlayerItemClicked(Item item)
+    private void OnPlayerItemClicked(InventoryItem item)
     {
-        if (currentChest != null && item != null)
+        if (currentChest != null && item != null && item.type == ItemType.Normal)
         {
             playerInventory.RemoveItem(item);
             currentChest.AddItem(item);
         }
     }
 
-    private void OnChestItemClicked(Item item)
+    private void OnChestItemClicked(InventoryItem item)
     {
-        if (item != null && playerInventory.AddItem(item))
+        if (item == null) return;
+
+        if (item.type == ItemType.Skill)
         {
+            HandleSkillItem(item);
+        }
+        else if (item.type == ItemType.Normal)
+        {
+            HandleNormalItem(item);
+        }
+    }
+
+    private void HandleSkillItem(InventoryItem item)
+    {
+        var skillManager = player.GetComponent<SkillManager>();
+        if (skillManager != null && skillManager.TryUnlockSkill(item.name))
+        {
+            if (playerUIController != null)
+            {
+                playerUIController.ShowMessage($"Unlock {item.name}");
+            }
+            
             currentChest.RemoveItem(item);
         }
     }
 
-    public void HideUI()
+    private void HandleNormalItem(InventoryItem item)
     {
-        StopAllCoroutines();
-        
-        if (currentChest != null)
+        if (playerInventory != null)
         {
-            // Play close animation before hiding UI
-            currentChest.PlayCloseAnimation();
-            
-            currentChest.OnChestChanged.RemoveListener(RefreshChestInventory);
-            currentChest = null;
-            
-            // Re-enable interaction controller when inventory is hidden
-            if (player != null)
-            {
-                var interactionController = player.GetComponent<InteractionController>();
-                if (interactionController != null)
-                {
-                    interactionController.SetEnabled(true);
-                }
-            }
+            currentChest.RemoveItem(item);
+            playerInventory.AddItem(item);
         }
-        
-        gameObject.SetActive(false);
-        ClearAllSlots();
     }
 
     private void ClearAllSlots()
@@ -223,10 +249,7 @@ public class ChestPanel : MonoBehaviour
             playerInventory.OnInventoryChanged.RemoveListener(RefreshPlayerInventory);
         }
 
-        if (currentChest != null)
-        {
-            currentChest.OnChestChanged.RemoveListener(RefreshChestInventory);
-        }
+        UnsubscribeFromCurrentChest();
 
         if (closeButton != null)
         {

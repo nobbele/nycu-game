@@ -4,38 +4,73 @@ using UnityEngine.Events;
 
 public class Inventory : MonoBehaviour
 {
-    // Maximum slots in inventory
-    [SerializeField] private int maxSlots = 20;
+    [SerializeField] private int maxSlots = 12;
+    private List<InventoryItem> items = new List<InventoryItem>();
     
-    // List of items in inventory
-    private List<Item> items = new List<Item>();
-    
-    // Event triggered when inventory changes
     public UnityEvent OnInventoryChanged = new UnityEvent();
-
-    // Add item to inventory
-    public bool AddItem(Item item)
+    
+    public bool AddItem(InventoryItem newItem)
     {
-        if (items.Count >= maxSlots)
+        if (newItem == null) return false;
+
+        // Handle skill items
+        if (newItem.type == ItemType.Skill)
+        {
+            var skillManager = GetComponent<SkillManager>();
+            if (skillManager != null)
+            {
+                bool unlocked = skillManager.TryUnlockSkill(newItem.id);
+                if (unlocked)
+                {
+                    OnInventoryChanged.Invoke();
+                    return true;
+                }
+            }
+            else
+            {
+                Debug.LogWarning("Inventory: SkillManager not found when trying to unlock skill");
+            }
             return false;
-            
-        items.Add(item);
-        OnInventoryChanged.Invoke();
-        return true;
+        }
+
+        // Try stacking with existing items
+        foreach (var item in items)
+        {
+            if (item.TryStack(newItem))
+            {
+                if (newItem.count <= 0)
+                {
+                    OnInventoryChanged.Invoke();
+                    return true;
+                }
+            }
+        }
+
+        // Add as new item if couldn't fully stack
+        if (newItem.count > 0 && items.Count < maxSlots)
+        {
+            items.Add(newItem);
+            OnInventoryChanged.Invoke();
+            return true;
+        }
+
+        return false;
     }
 
-    // Remove item from inventory
-    public bool RemoveItem(Item item)
+    public bool RemoveItem(InventoryItem item)
     {
+        if (item == null) return false;
+
         bool removed = items.Remove(item);
         if (removed)
+        {
             OnInventoryChanged.Invoke();
+        }
         return removed;
     }
 
-    // Get all items in inventory
-    public List<Item> GetItems()
+    public List<InventoryItem> GetItems()
     {
-        return new List<Item>(items);
+        return new List<InventoryItem>(items);
     }
 }

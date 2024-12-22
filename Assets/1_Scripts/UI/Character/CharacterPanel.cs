@@ -13,128 +13,183 @@ public class CharacterPanel : MonoBehaviour
     [Header("Skill Points")]
     [SerializeField] private TextMeshProUGUI skillPointText;
     
-    [Header("Basic Skills")]
-    [SerializeField] private List<Skill> BasicSkill;
-    [SerializeField] private List<SkillUI> BasicSkillUI;
-    
-    [Header("Fire Skills")]
-    [SerializeField] private List<Skill> FireSkill;
-    [SerializeField] private List<SkillUI> FireSkillUI;
-    
-    [Header("Grass Skills")]
-    [SerializeField] private List<Skill> GrassSkill;
-    [SerializeField] private List<SkillUI> GrassSkillUI;
-    
-    [Header("Water Skills")]
-    [SerializeField] private List<Skill> WaterSkill;
-    [SerializeField] private List<SkillUI> WaterSkillUI;
+    [Header("Skill Containers")]
+    [SerializeField] private Transform basicSkillContainer;
+    [SerializeField] private Transform fireSkillContainer;
+    [SerializeField] private Transform grassSkillContainer;
+    [SerializeField] private Transform waterSkillContainer;
+
+    [Header("Backpack")]
+    [SerializeField] private Transform backpackContainer;
     
     [Header("Skill Slots")]
     public List<SkillSlot> SkillSlots;
 
+    private Dictionary<SkillType, List<SkillUI>> skillUIGroups = new Dictionary<SkillType, List<SkillUI>>();
+    private SkillManager skillManager;
+    private Inventory playerInventory;
     private int skillPoints;
-    private List<ItemUI> BasicItemUI;
-    private List<ItemUI> FireItemUI;
-    private List<ItemUI> GrassItemUI;
-    private List<ItemUI> WaterItemUI;
-
-    public UnityEvent<int> onSkillPointsChanged = new();
+    private ItemSlotUI[] backpackSlots;
 
     private void Awake()
     {
         gameObject.SetActive(false);
-        InitializeItemUIs();
+        InitializeSkillUIGroups();
+        InitializeBackpack();
     }
 
     private void Start()
     {
-        SetupAllSkills();
-        SetAllEnabled();
+        if (Player.Instance == null) return;
+        
+        InitializePlayerComponents();
+        SetupSkillManager();
+        SetupInventory();
     }
 
-    private void InitializeItemUIs()
+    private void InitializeSkillUIGroups()
     {
-        BasicItemUI = InitializeItemUIList(BasicSkillUI);
-        FireItemUI = InitializeItemUIList(FireSkillUI);
-        GrassItemUI = InitializeItemUIList(GrassSkillUI);
-        WaterItemUI = InitializeItemUIList(WaterSkillUI);
+        skillUIGroups[SkillType.Basic] = new List<SkillUI>(basicSkillContainer.GetComponentsInChildren<SkillUI>(true));
+        skillUIGroups[SkillType.Fire] = new List<SkillUI>(fireSkillContainer.GetComponentsInChildren<SkillUI>(true));
+        skillUIGroups[SkillType.Grass] = new List<SkillUI>(grassSkillContainer.GetComponentsInChildren<SkillUI>(true));
+        skillUIGroups[SkillType.Water] = new List<SkillUI>(waterSkillContainer.GetComponentsInChildren<SkillUI>(true));
     }
 
-    private List<ItemUI> InitializeItemUIList(List<SkillUI> skillUIs)
+    private void InitializeBackpack()
     {
-        var itemUIs = new List<ItemUI>();
-        foreach (var skillUI in skillUIs)
+        if (backpackContainer != null)
         {
-            itemUIs.Add(skillUI.GetComponent<ItemUI>());
+            backpackSlots = backpackContainer.GetComponentsInChildren<ItemSlotUI>(true);
         }
-        return itemUIs;
     }
 
-    private void SetupAllSkills()
+    private void InitializePlayerComponents()
     {
-        SetupSkillGroup(BasicSkill, BasicSkillUI, BasicItemUI);
-        SetupSkillGroup(FireSkill, FireSkillUI, FireItemUI);
-        SetupSkillGroup(GrassSkill, GrassSkillUI, GrassItemUI);
-        SetupSkillGroup(WaterSkill, WaterSkillUI, WaterItemUI);
+        skillManager = Player.Instance.GetComponent<SkillManager>();
+        playerInventory = Player.Instance.GetComponent<Inventory>();
     }
 
-    private void SetupSkillGroup(List<Skill> skills, List<SkillUI> skillUIs, List<ItemUI> itemUIs)
+    private void SetupSkillManager()
     {
-        for (int i = 0; i < skillUIs.Count; i++)
+        if (skillManager == null) return;
+
+        skillManager.onSkillUnlocked.AddListener(OnSkillUnlocked);
+        SetupSkillUIs();
+    }
+
+    private void SetupInventory()
+    {
+        if (playerInventory == null) return;
+        
+        playerInventory.OnInventoryChanged.AddListener(RefreshInventoryItems);
+    }
+
+    private void SetupSkillUIs()
+    {
+        foreach (var group in skillUIGroups)
         {
-            if (skills[i] != null)
+            List<Skill> allSkills = skillManager.GetAllSkillsInGroup(group.Key);
+            List<Skill> unlockedSkills = skillManager.GetUnlockedSkills(group.Key);
+            
+            for (int i = 0; i < group.Value.Count && i < allSkills.Count; i++)
             {
-                SetupSkillPair(skills[i], skillUIs[i], itemUIs[i]);
+                SkillUI skillUI = group.Value[i];
+                skillUI.onSkillLevelChanged.AddListener(SetSkillPoint);
+                
+                if (unlockedSkills.Contains(allSkills[i]))
+                {
+                    skillUI.SetSkill(allSkills[i]);
+                }
+                else
+                {
+                    skillUI.SetSkill(null);
+                }
             }
         }
     }
 
-    private void SetupSkillPair(Skill skill, SkillUI skillUI, ItemUI itemUI)
+    private void OnEnable()
     {
-        skillUI.SetSkill(skill);
-        skillUI.onSkillLevelChanged.AddListener(SetSkillPoint);
-        skillUI.onSkillLevelChanged.AddListener((i) => UpdateItemInfo(skillUI, itemUI));
-
-        Item skillItem = new Item(
-            skill.name,
-            skill.skillName,
-            skill.icon,
-            "LV:0"
-        );
-
-        itemUI.Setup(skillItem, null);
+        RefreshAllSkillUIs();
+        RefreshInventoryItems();
     }
 
-    private void UpdateItemInfo(SkillUI skillUI, ItemUI itemUI)
+    private void RefreshAllSkillUIs()
     {
-        if (itemUI != null && itemUI.currentItem != null)
+        if (skillManager == null) return;
+
+        foreach (var group in skillUIGroups)
         {
-            itemUI.currentItem.info = $"LV:{skillUI.CurrentLevel}";
-            itemUI.RefreshInfo();
+            List<Skill> unlockedSkills = skillManager.GetUnlockedSkills(group.Key);
+            foreach (var skillUI in group.Value)
+            {
+                if (skillUI.CurrentSkill != null && !unlockedSkills.Contains(skillUI.CurrentSkill))
+                {
+                    skillUI.SetSkill(null);
+                }
+            }
         }
     }
 
-    public void SetSkillPoint(int i)
+    private void OnSkillUnlocked(SkillType type, Skill skill)
     {
-        skillPoints += i;
-        skillPointText.text = $"Skill Points:{skillPoints}";
-        onSkillPointsChanged.Invoke(skillPoints);
-        SetAllEnabled();
-    }
-
-    private void SetAllEnabled()
-    {
-        SetSkillGroupEnabled(BasicSkillUI);
-        SetSkillGroupEnabled(FireSkillUI);
-        SetSkillGroupEnabled(GrassSkillUI);
-        SetSkillGroupEnabled(WaterSkillUI);
-    }
-
-    private void SetSkillGroupEnabled(List<SkillUI> skillUIs)
-    {
+        if (!skillUIGroups.TryGetValue(type, out var skillUIs)) return;
+        
         foreach (var skillUI in skillUIs)
         {
-            skillUI.SetEnabled(skillPoints > 0);
+            // If this UI slot is empty or matches the unlocked skill
+            if (skillUI.CurrentSkill == null || skillUI.CurrentSkill.name == skill.name)
+            {
+                skillUI.SetSkill(skill);
+                break;
+            }
+        }
+    }
+
+    private void RefreshInventoryItems()
+    {
+        if (backpackSlots == null || playerInventory == null) return;
+
+        foreach (var slot in backpackSlots)
+        {
+            slot.Clear();
+        }
+
+        var items = playerInventory.GetItems();
+        for (int i = 0; i < items.Count && i < backpackSlots.Length; i++)
+        {
+            backpackSlots[i].Setup(items[i], null);
+        }
+    }
+
+    public void SetSkillPoint(int points)
+    {
+        skillPoints += points;
+        skillPointText.text = $"Skill Points:{skillPoints}";
+        SetAllSkillUIEnabled();
+    }
+
+    private void SetAllSkillUIEnabled()
+    {
+        foreach (var group in skillUIGroups.Values)
+        {
+            foreach (var skillUI in group)
+            {
+                skillUI.SetEnabled(skillPoints > 0);
+            }
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (skillManager != null)
+        {
+            skillManager.onSkillUnlocked.RemoveListener(OnSkillUnlocked);
+        }
+
+        if (playerInventory != null)
+        {
+            playerInventory.OnInventoryChanged.RemoveListener(RefreshInventoryItems);
         }
     }
 }

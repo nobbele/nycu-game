@@ -6,17 +6,17 @@ using System;
 
 public class ItemUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    [SerializeField] private Image icon;
-    [SerializeField] private TextMeshProUGUI info;
-    [SerializeField] private GameObject hoverContainer;
-    private Image hoverMask;
-    private TextMeshProUGUI hoverName;
+    [SerializeField] protected Image icon;
+    [SerializeField] protected TextMeshProUGUI info;
+    [SerializeField] protected GameObject hoverContainer;
+    protected Image hoverMask;
+    protected TextMeshProUGUI hoverName;
     
     public Item currentItem { get; private set; }
-    private Action<Item> onItemClicked;
-    private Sprite defaultIcon;
+    protected Action<Item> onItemClicked;
+    protected Sprite defaultIcon;
     
-    private void Awake()
+    protected void Awake()
     {
         if (icon != null)
         {

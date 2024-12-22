@@ -16,7 +16,8 @@ public class SkillUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
 
     public UnityEvent<int> onSkillLevelChanged = new();
     
-    public Skill skill;
+    public Skill CurrentSkill => skill;
+    private Skill skill;
     private SkillSlot equippedSlot;
     private Image draggableIcon;
     private Canvas targetCanvas;
@@ -42,6 +43,11 @@ public class SkillUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
         icon.sprite = null;
         UpdateButtonStates(false);
         SetSkillLockState();
+    }
+
+    private void Start()
+    {
+        lvText.text = "LV:0";
     }
 
     public void SetSkill(Skill skill)
@@ -144,7 +150,7 @@ public class SkillUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragH
     }
 
     public void SetSkillLockState()
-    {
+        {
         skillUnlocked = lvl > 0 && skill != null;
         blocker.SetActive(!skillUnlocked);
         UpdateButtonStates(increment.interactable);

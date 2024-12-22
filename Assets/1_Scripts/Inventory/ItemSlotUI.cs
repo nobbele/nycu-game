@@ -2,25 +2,25 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using System;
 
-[RequireComponent(typeof(ItemUI))]
+[RequireComponent(typeof(InventoryItemUI))]
 public class ItemSlotUI : MonoBehaviour, IPointerClickHandler
 {
-    private ItemUI itemUI;
-    private Action<Item> onItemClicked;
-
+    private InventoryItemUI itemUI;
+    private Action<InventoryItem> onItemClicked;
+    
     private void Awake()
     {
-        itemUI = GetComponent<ItemUI>();
+        itemUI = GetComponent<InventoryItemUI>();
         if (itemUI == null)
         {
-            Debug.LogError($"Missing ItemUI component on {gameObject.name}");
+            Debug.LogError($"Missing InventoryItemUI component on {gameObject.name}");
         }
     }
 
-    public void Setup(Item item, Action<Item> clickCallback)
+    public void Setup(InventoryItem item, Action<InventoryItem> clickCallback)
     {
         onItemClicked = clickCallback;
-        itemUI?.Setup(item, null);
+        itemUI?.Setup(item, clickCallback);
     }
 
     public void Clear()
@@ -35,5 +35,10 @@ public class ItemSlotUI : MonoBehaviour, IPointerClickHandler
         {
             onItemClicked.Invoke(itemUI.currentItem);
         }
+    }
+    
+    public void RefreshCount()
+    {
+        itemUI?.RefreshCount();
     }
 }
