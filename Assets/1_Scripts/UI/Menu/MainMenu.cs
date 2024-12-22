@@ -13,12 +13,12 @@ public class MainMenu : MonoBehaviour {
     public void PlayGame() {
         Debug.Log("New Game");
         SaveSystem.ResetSaveData();
-        SceneManager.LoadScene("PortalHubScene");
+        SceneManager.LoadScene("StoryScene");
     }
     
     public void LoadGame() {
         Debug.Log("Load Game");
-        SceneManager.LoadScene("MainHubScene");
+        SceneManager.LoadScene("PortalHubScene");
     }
 
     public void OpenSettings() {

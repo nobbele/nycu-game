@@ -15,7 +15,7 @@ public class KingdomExit : MonoBehaviour
 
     private void GoToHub()
     {
-        SceneManager.LoadScene("MainHubScene");
+        SceneManager.LoadScene("PortalHubScene");
     }
 
     private void GoToCredits()

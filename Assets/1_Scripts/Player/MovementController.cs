@@ -56,6 +56,7 @@ public class MovementController : MonoBehaviour
 
     void Start()
     {
+        Application.targetFrameRate = 60;
         rigidbody = GetComponent<Rigidbody>();
         
         var updatedKeybinds = new Dictionary<string, KeyCode>();
@@ -206,7 +207,7 @@ public class MovementController : MonoBehaviour
         {
             animator.applyRootMotion = false;
             animator.SetBool("IsMoving", true);
-            rigidbody.rotation = Quaternion.RotateTowards(rigidbody.rotation, toRot, rotationSpeed * Time.deltaTime);
+            rigidbody.MoveRotation(Quaternion.RotateTowards(rigidbody.rotation, toRot, rotationSpeed * Time.fixedDeltaTime));
             characterRotation = CameraForwardRotation.eulerAngles;
         }
         else
