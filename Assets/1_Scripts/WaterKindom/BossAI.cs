@@ -17,7 +17,7 @@ public class BossAI : BaseEnemyAI<BossData>
     protected override void UpdateBehavior()
     {
         if (isAnimating || animator == null) return;
-
+        
         float distanceToPlayer = Vector3.Distance(player.position, transform.position);
         
         if (distanceToPlayer <= enemyData.attackRange)

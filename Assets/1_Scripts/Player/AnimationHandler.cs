@@ -6,6 +6,8 @@ public class AnimationHandler : MonoBehaviour
 {
     private MovementController movementController;
     private Animator animator;
+    public AudioSource audioSource;
+    public AudioClip slashSound;
     public UnityEvent OnSlashStart = new();
     public UnityEvent OnSlashEnd = new();
     
@@ -53,5 +55,14 @@ public class AnimationHandler : MonoBehaviour
         transform.rotation = movementController.prevRotation;
         animator.applyRootMotion = false;
         animator.SetBool("IsCastingSkill", false);
+    }
+    
+    public void PlaySlashSound()
+    {
+        if (slashSound != null && audioSource != null)
+        {
+            audioSource.clip = slashSound;
+            audioSource.Play();
+        }
     }
 }
