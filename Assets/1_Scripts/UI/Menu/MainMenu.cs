@@ -13,7 +13,7 @@ public class MainMenu : MonoBehaviour {
     public void PlayGame() {
         Debug.Log("New Game");
         SaveSystem.ResetSaveData();
-        SceneManager.LoadScene("MainHubScene");
+        SceneManager.LoadScene("PortalHubScene");
     }
     
     public void LoadGame() {
