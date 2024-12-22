@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "OverheadSlash", menuName = "RPG/Skills/OverheadSlash")]
-public class OverheadSlash : Skill
+public class OverheadSlash : MagicSkill
 {
     public GameObject effectInstance;
     private Animator animator;
@@ -18,6 +18,7 @@ public class OverheadSlash : Skill
             Vector3 spawnPos = caster.transform.position;
             spawnPos.y += 1;
             GameObject effect = Instantiate(effectInstance, spawnPos, Quaternion.Euler(caster.transform.rotation.eulerAngles - Vector3.up * 15f));
+            AddTriggerToEffect(effect);
             Destroy(effect, 2);
         }
         
