@@ -47,4 +47,22 @@ public class Boss : BaseEnemy<BossData>
     {
         animator?.SetTrigger("Introduction");
     }
+
+    protected override void OnDead()
+    {
+        base.OnDead();
+
+        Transform parentTransform = transform.parent;
+        Transform kingdomTransform = parentTransform.Find("KingdomExit");
+        if (kingdomTransform != null)
+        {
+            kingdomTransform.gameObject.SetActive(true);
+        }
+        else
+        {
+            Debug.LogError("KingdomExit not found!");
+        }
+
+        SaveSystem.SetBossClear("WaterKingdom");
+    }
 }
