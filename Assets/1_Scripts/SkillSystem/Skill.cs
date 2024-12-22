@@ -7,6 +7,8 @@ public abstract class Skill : ScriptableObject
     public string description;
     public Sprite icon;
     public float cooldown;
+    public int damage = 15;
+
     private float lastUsedTime = -999f;
     public float LastUsedTime => lastUsedTime;
     
