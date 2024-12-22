@@ -16,5 +16,6 @@ MonoBehaviour:
   description: A concentrated water burst that damages enemies in range.
   icon: {fileID: 21300000, guid: 10dc9c67ffb56dd4f800103585f26888, type: 3}
   cooldown: 5
+  damage: 20
   effectInstance: {fileID: 5953149065293296922, guid: c6d7b80605b913847ade72b14a85630d,
     type: 3}
