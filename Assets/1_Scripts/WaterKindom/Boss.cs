@@ -62,7 +62,10 @@ public class Boss : BaseEnemy<BossData>
         {
             Debug.LogError("KingdomExit not found!");
         }
-
-        SaveSystem.SetBossClear("WaterKingdom");
+        
+        if (transform.gameObject.name.Equals("Salamander"))
+            SaveSystem.SetBossClear("FireKingdom");
+        else
+            SaveSystem.SetBossClear("WaterKingdom");
     }
 }

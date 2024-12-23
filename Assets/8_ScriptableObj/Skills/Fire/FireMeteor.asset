@@ -18,3 +18,4 @@ MonoBehaviour:
   cooldown: 5
   effectInstance: {fileID: 8378648546881499446, guid: 1b6074b515ad9f645a5f54861c2ee744,
     type: 3}
+  soundEffect: {fileID: 8300000, guid: af4616ad9e2e94d42b0e90b8d6ec27dd, type: 3}

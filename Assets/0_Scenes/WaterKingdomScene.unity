@@ -35897,6 +35897,11 @@ PrefabInstance:
       propertyPath: AttributePoints
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 6634713493206059829, guid: fad90c457314e2746ba3bba5ea5fe5ec,
+        type: 3}
+      propertyPath: rotationSpeed
+      value: 800
+      objectReference: {fileID: 0}
     - target: {fileID: 7318411146877439295, guid: fad90c457314e2746ba3bba5ea5fe5ec,
         type: 3}
       propertyPath: m_LocalRotation.w
@@ -41731,7 +41736,7 @@ MeshCollider:
   m_Enabled: 1
   serializedVersion: 5
   m_Convex: 0
-  m_CookingOptions: 30
+  m_CookingOptions: 14
   m_Mesh: {fileID: 674340280032488212, guid: 17edde830b2c03c4380312f9ef12286e, type: 3}
 --- !u!4 &523428468 stripped
 Transform:
@@ -43784,7 +43789,7 @@ MeshCollider:
   m_Enabled: 1
   serializedVersion: 5
   m_Convex: 0
-  m_CookingOptions: 30
+  m_CookingOptions: 14
   m_Mesh: {fileID: 674340280032488212, guid: 17edde830b2c03c4380312f9ef12286e, type: 3}
 --- !u!4 &642889832 stripped
 Transform:
@@ -102148,8 +102153,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 31.592697, y: 20.863754, z: 8.986845}
-  m_Center: {x: -0.6640854, y: 9.931877, z: -3.9934225}
+  m_Size: {x: 6.359421, y: 0.817297, z: 6.2598724}
+  m_Center: {x: -0.068092346, y: -0.09135151, z: 0.26885223}
 --- !u!4 &1067514395
 Transform:
   m_ObjectHideFlags: 0
@@ -102159,7 +102164,7 @@ Transform:
   m_GameObject: {fileID: 1067514392}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -16.90001, y: 12.2, z: -9.490005}
+  m_LocalPosition: {x: -15.87, y: 12.82, z: 6.76}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -108823,7 +108828,7 @@ MeshCollider:
   m_Enabled: 1
   serializedVersion: 5
   m_Convex: 0
-  m_CookingOptions: 30
+  m_CookingOptions: 14
   m_Mesh: {fileID: 674340280032488212, guid: 17edde830b2c03c4380312f9ef12286e, type: 3}
 --- !u!4 &1179813292 stripped
 Transform:
@@ -120239,7 +120244,7 @@ MeshCollider:
   m_Enabled: 1
   serializedVersion: 5
   m_Convex: 0
-  m_CookingOptions: 30
+  m_CookingOptions: 14
   m_Mesh: {fileID: 674340280032488212, guid: 17edde830b2c03c4380312f9ef12286e, type: 3}
 --- !u!4 &1293886346 stripped
 Transform:
@@ -127617,7 +127622,7 @@ MeshCollider:
   m_Enabled: 1
   serializedVersion: 5
   m_Convex: 0
-  m_CookingOptions: 30
+  m_CookingOptions: 14
   m_Mesh: {fileID: 674340280032488212, guid: 17edde830b2c03c4380312f9ef12286e, type: 3}
 --- !u!4 &1459534223 stripped
 Transform:

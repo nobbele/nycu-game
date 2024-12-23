@@ -15,8 +15,9 @@ MonoBehaviour:
   effectName: Speed Buff
   description: Boosting speed
   icon: {fileID: 0}
-  duration: 5
+  duration: 15
   isStackable: 0
   effectType: 0
-  magnitude: 1.5
-  particleEffect: {fileID: 4365151515249092227, guid: 58c0569e13328e741b9ab8c4de3db18c, type: 3}
+  magnitude: 1.8
+  particleEffect: {fileID: 4365151515249092227, guid: 58c0569e13328e741b9ab8c4de3db18c,
+    type: 3}
